@@ -1,0 +1,22 @@
+{
+  "name": "tarea_1_grupo_4",
+  "version": "1.0.0",
+  "description": "## integrantes: - Alexander Israel - Benjamín Assael - Javier Bahamondes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jfbahamondes/tarea_1_grupo_4.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jfbahamondes/tarea_1_grupo_4/issues"
+  },
+  "homepage": "https://github.com/jfbahamondes/tarea_1_grupo_4#readme",
+  "dependencies": {
+    "lodash": "^4.14.149"
+  }
+}
