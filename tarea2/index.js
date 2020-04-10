@@ -9,7 +9,7 @@ function setRandomImage() {
 }
 
 function getRandomName(set, exclude) {
-  filteredSet = set.filter((imgData) => !exclude.some((value) => value.name === imgData.name));
+  filteredSet = set.filter((imgData) => !exclude.includes(imgData.name));
   return filteredSet[Math.floor(Math.random() * filteredSet.length)].name;
 }
 
@@ -61,6 +61,7 @@ function Game() {
       progressBar.reset();
     }
 
+    // For seeing round time seconds in the UI
     document.getElementById(`seconds`).innerText = Math.round(roundProgress/100, 3)/10;
   }
 
