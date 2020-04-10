@@ -30,30 +30,46 @@ function setRandomOptions(correctGuess) {
 
 function Game() {
   const progressBar = ProgressBar();
-  let timerRound = null;
+  let gameTimer = null;
   let paused = false;
-  let second = 0;
 
-  function setInitialGame(progressBar) {
-    progressBar.init();
+  // in milliseconds
+  let roundProgress = 0;
+  const roundIncrement = 10;
+  const roundEndTime = 10000;
+
+  function setInitialGame() {
     correctGuess = setRandomImage();
     setRandomOptions(correctGuess);
   }
 
   function init() {
-    setInitialGame(progressBar);
-    timerRound = Timer(roundLoop, 10000, { progressBar });
-    timerRound.init();
+    setInitialGame();
+    gameTimer = Timer(roundLoop, roundIncrement);
+    gameTimer.init();
+  }
+
+  const roundLoop = () => {
+
+    progressBar.increment(roundIncrement/100);
+    roundProgress += roundIncrement;
+
+    if (roundProgress === roundEndTime) {
+      const correctGuess = setRandomImage();
+      setRandomOptions(correctGuess);
+      roundProgress = 0;
+      progressBar.reset();
+    }
+
+    document.getElementById(`seconds`).innerText = Math.round(roundProgress/100, 3)/10;
   }
 
   function pause() {
-    progressBar.pause();
-    timerRound.pause();
+    gameTimer && gameTimer.pause();
   }
 
   function start() {
-    progressBar.start();
-    timerRound.start();
+    gameTimer && gameTimer.start();
   }
 
   function toggleGame() {
@@ -61,27 +77,14 @@ function Game() {
     paused = !paused;
   }
 
-  const roundLoop = ({ progressBar }) => {
-    const correctGuess = setRandomImage();
-    setRandomOptions(correctGuess);
-    second = (second++) !== 10 ? second++ : 0;
-    document.getElementById(`second`).innerText = second;
-    progressBar.loop();
+  return { 
+    init, 
+    isRunning: () => !!gameTimer, 
+    pause,
+    start,
+    toggleGame 
   }
-
-  return { init, pause, start, toggleGame }
 }
 
 const game = Game();
-
-const handleKeyPress = (event) => {
-  const keyName = event.key;
-
-  if (keyName === 's') {
-    game.init();
-  } else if (keyName === ' ') {
-    game.toggleGame();
-  }
-
-}
 
