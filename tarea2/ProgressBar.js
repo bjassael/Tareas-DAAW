@@ -3,16 +3,20 @@ function ProgressBar() {
   const progressBarE = document.getElementById("progress");
 
   function increment(incrementValue) {
-    progress = Math.min(progress + incrementValue, 100);
-    progressBarE.style.width = `${progress}%`;
+    progress = Math.min(progress + incrementValue, ROUND_END_TIME);
+    progressBarE.style.width = `${(progress / ROUND_END_TIME) * 100}%`;
   }
 
+  function getProgress() {
+    return progress;
+  }
   function reset() {
     progress = 0;
   }
 
   return {
     increment,
-    reset,
+    getProgress,
+    reset
   };
 }
