@@ -1,6 +1,6 @@
 function ProgressBar() {
   let progress = 0;
-  const progressBarE = document.getElementById('progress');
+  const progressBarE = document.getElementById("progress");
 
   function increment(incrementValue) {
     progress = Math.min(progress + incrementValue, 100);
@@ -10,10 +10,9 @@ function ProgressBar() {
   function reset() {
     progress = 0;
   }
-  
+
   return {
     increment,
-    reset
-  }
-
+    reset,
+  };
 }
