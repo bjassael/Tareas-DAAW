@@ -1,34 +1,55 @@
 <!DOCTYPE html>
 <html>
 
-  <meta>
-    <link rel="stylesheet" href="./styles.css">
-  </meta>
+<meta>
+<link rel="stylesheet" href="./styles.css">
+</meta>
 
-  <body>
-    <div id="game-container">
+<body>
+  <div id="game-container">
+    <h1 class="game-title">Guess This Logo!</h1>
 
-      <div id="round-bar">
-        <div id="progress"></div>
-      </div>
-
-      <div id="seconds">0</div>
-      <!-- Give attribution for images! -->
-      <img id="guess-image" src="http://icons.iconarchive.com/icons/danleech/simple/1024/dribbble-icon.png" alt="">
-
-
-      <div id="guess-container">
-        <div id="guess1"></div>
-        <div id="guess2"></div>
-        <div id="guess3"></div>
-        <div id="guess4"></div>
-      </div>
-
+    <div class="score">
+      <p>Last Round: </p>
+      <p id="last-round">0</p>
     </div>
-  </body>
 
-  <script src="./Timer.js"></script>
-  <script src="./ProgressBar.js"></script>
-  <script src="./index.js"></script>
-  <script src="./handleInput.js"></script>
+    <div class="score">
+      <h2>Score: </h2>
+      <h2 id="score">0</h2>
+    </div>
+
+
+    <div id="round-bar">
+      <div id="progress"></div>
+    </div>
+
+    <div id="seconds">0</div>
+    <!-- Give attribution for images! -->
+    <img id="guess-image" src="http://icons.iconarchive.com/icons/danleech/simple/1024/dribbble-icon.png" alt="">
+
+
+    <div id="guess-container">
+      <div id="guess1"></div>
+      <div id="guess2"></div>
+      <div id="guess3"></div>
+      <div id="guess4"></div>
+    </div>
+
+    <div class="game-instructions">
+      <p>Press the `s` key to start the game!</p>
+      <p>Press the `space` key to pause/play the game!</p>
+      <p>Click on the option button to submit your guess!</p>
+      <p>Click on the `q` key to end the current round!</p>
+    </div>
+
+  </div>
+</body>
+
+<script src="https://unpkg.com/rxjs/bundles/rxjs.umd.min.js"></script>
+<script src="./Timer.js"></script>
+<script src="./ProgressBar.js"></script>
+<script src="./index.js"></script>
+<script src="./handleInput.js"></script>
+
 </html>
