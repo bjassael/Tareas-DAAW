@@ -1,4 +1,12 @@
 const { fromEvent } = rxjs;
+const {
+  filter,
+  debounceTime,
+  merge,
+  distinctUntilChanged,
+  first,
+  map
+} = rxjs.operators;
 
 var globalMax = 0;
 
@@ -32,8 +40,10 @@ function Game() {
   let progressBar = ProgressBar();
   let gameTimer = null;
   let paused = false;
-  let score = 0;
+  let scorePlayer1 = 0;
+  let scorePlayer2 = 0;
   let exit = false;
+  let correctGuess;
 
   function setInitialGame() {
     correctGuess = setRandomImage();
@@ -41,24 +51,25 @@ function Game() {
   }
 
   function init() {
-    score = 0;
+    scorePlayer1 = 0;
+    scorePlayer2 = 0;
     exit = false;
     setInitialGame();
     gameTimer = Timer(roundLoop, ROUND_INCREMENT);
     gameTimer.init();
+    guessOption();
   }
 
   const roundLoop = () => {
     progressBar.increment(ROUND_INCREMENT);
 
     if (progressBar.getProgress() === MAX_ROUND_TIME) {
-      updateScore(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
+      updateScorePlayer1(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
+      updateScorePlayer2(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
       correctGuess = setRandomImage();
       setRandomOptions(correctGuess);
       progressBar.reset();
     }
-
-    guessOption(correctGuess);
 
     // For seeing round time seconds in the UI
     document.getElementById(
@@ -83,13 +94,13 @@ function Game() {
     gameTimer = null;
     progressBar.reset();
     document.getElementById("progress").style.width = `0%`;
-    // progressBar = null;
     paused = false;
-    document.getElementById(`last-round`).innerText = score;
-    score = 0;
+    scorePlayer1 = 0;
+    scorePlayer2 = 0;
     exit = true;
-    document.getElementById(`score`).innerText = score;
-    document.getElementById(`seconds`).innerText = 0;
+    document.getElementById("score-player-1").innerText = scorePlayer1;
+    document.getElementById("score-player-2").innerText = scorePlayer2;
+    document.getElementById("seconds").innerText = 0;
     document.getElementById("guess-image").src =
       "http://icons.iconarchive.com/icons/danleech/simple/1024/dribbble-icon.png";
     for (let position = 1; position < 5; position++) {
@@ -102,69 +113,58 @@ function Game() {
     paused = !paused;
   }
 
-  function guessOption(correctGuess) {
+  function guessOption() {
     if (!exit) {
-      // grab button reference
-      const option1 = document.getElementById("guess1");
-      const option2 = document.getElementById("guess2");
-      const option3 = document.getElementById("guess3");
-      const option4 = document.getElementById("guess4");
+      const ObservablePlayer2Down = fromEvent(document, "keydown");
+      ObservablePlayer2Down.pipe(
+        filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
+        map((event) => PLAYER_2_KEYS[event.key])
+      ).subscribe((event) => SubscriptionFunctionEvent(event, "player2"));
+      const ObservablePlayer1Down = fromEvent(document, "keydown");
+      ObservablePlayer1Down.pipe(
+        filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
+        map((event) => PLAYER_1_KEYS[event.key])
+      ).subscribe((event) => SubscriptionFunctionEvent(event, "player1"));
 
-      // create an observable of button clicks
-      const myObservable1 = fromEvent(option1, "click");
-      const myObservable2 = fromEvent(option2, "click");
-      const myObservable3 = fromEvent(option3, "click");
-      const myObservable4 = fromEvent(option4, "click");
-
-      const SubscriptionFunctionEvent = (event) => {
+      function SubscriptionFunctionEvent(event, player) {
+        const updateScore =
+          player === "player1" ? updateScorePlayer1 : updateScorePlayer2;
         if (paused) {
           return;
         }
-        if (globalMax === 0) {
-          console.log(correctGuess.toLowerCase());
-          console.log(event.toElement.innerText.toLowerCase());
-          console.log(
-            event.toElement.innerText.toLowerCase() ===
-              correctGuess.toLowerCase()
+        if (event.innerText.toLowerCase() === correctGuess.toLowerCase()) {
+          updateScore(
+            (SCORE_PER_CORRECT_ANSWER *
+              (MAX_ROUND_TIME - progressBar.getProgress())) /
+              MAX_ROUND_TIME
           );
-          if (
-            event.toElement.innerText.toLowerCase() ===
-            correctGuess.toLowerCase()
-          ) {
-            updateScore(
-              (SCORE_PER_CORRECT_ANSWER *
-                (MAX_ROUND_TIME - progressBar.getProgress())) /
-                MAX_ROUND_TIME
-            );
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            progressBar.reset();
-          } else {
-            updateScore(PENALTY_SCORE_FOR_MISSING);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            progressBar.reset();
-          }
-          globalMax += 1;
+          correctGuess = setRandomImage();
+          setRandomOptions(correctGuess);
+          progressBar.reset();
+        } else {
+          updateScore(PENALTY_SCORE_FOR_MISSING);
+          correctGuess = setRandomImage();
+          setRandomOptions(correctGuess);
+          progressBar.reset();
         }
-      };
-
-      const subscription1 = myObservable1.subscribe(SubscriptionFunctionEvent);
-      const subscription2 = myObservable2.subscribe(SubscriptionFunctionEvent);
-      const subscription3 = myObservable3.subscribe(SubscriptionFunctionEvent);
-      const subscription4 = myObservable4.subscribe(SubscriptionFunctionEvent);
-      globalMax = 0;
-      // subscription1.unsubscribe();
-      // subscription2.unsubscribe();
-      // subscription3.unsubscribe();
-      // subscription4.unsubscribe();
+      }
     }
   }
 
-  function updateScore(val) {
+  function updateScorePlayer1(val) {
     if (!exit) {
-      score += val;
-      document.getElementById(`score`).innerText = score.toFixed(2);
+      scorePlayer1 += val;
+      document.getElementById(
+        "score-player-1"
+      ).innerText = scorePlayer1.toFixed(2);
+    }
+  }
+  function updateScorePlayer2(val) {
+    if (!exit) {
+      scorePlayer2 += val;
+      document.getElementById(
+        "score-player-2"
+      ).innerText = scorePlayer2.toFixed(2);
     }
   }
 
