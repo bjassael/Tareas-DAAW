@@ -61,7 +61,6 @@ function Game() {
     guessOption(correctGuess);
 
     // For seeing round time seconds in the UI
-    console.log("progressBar.getProgress()", progressBar.getProgress());
     document.getElementById(
       `seconds`
     ).innerText = progressBar.getProgress().toFixed(1);
