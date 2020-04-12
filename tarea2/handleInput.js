@@ -7,6 +7,7 @@ const handleKeyPress = (event) => {
       game.init();
     }
   } else if (keyName === " ") {
+    event.preventDefault();
     game.toggleGame();
   } else if (keyName === "q") {
     if (game.isRunning()) {

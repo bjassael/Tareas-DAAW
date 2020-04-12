@@ -1,84 +1,17 @@
 const { fromEvent } = rxjs;
 
-const imagesData = [
-  { name: "Jabba the Hut", path: "./icons/Jabba the Hut.png" },
-  { name: "Padme amidala", path: "./icons/Padme amidala.png" },
-  { name: "afro", path: "./icons/afro.png" },
-  { name: "ant man", path: "./icons/ant man.png" },
-  { name: "antenna", path: "./icons/antenna.png" },
-  { name: "ariel", path: "./icons/ariel.png" },
-  { name: "bald hero", path: "./icons/bald hero.png" },
-  { name: "batman", path: "./icons/batman.png" },
-  { name: "bb-8", path: "./icons/bb-8.png" },
-  { name: "beast", path: "./icons/beast.png" },
-  { name: "belle", path: "./icons/belle.png" },
-  { name: "ben kenobi", path: "./icons/ben kenobi.png" },
-  { name: "bob", path: "./icons/bob.png" },
-  { name: "bounty hunter", path: "./icons/bounty hunter.png" },
-  { name: "c-3po", path: "./icons/c-3po.png" },
-  { name: "c3po", path: "./icons/c3po.png" },
-  { name: "capitan america", path: "./icons/capitan america.png" },
-  { name: "chewbacca", path: "./icons/chewbacca.png" },
-  { name: "cinderella", path: "./icons/cinderella.png" },
-  { name: "clone", path: "./icons/clone.png" },
-  { name: "cyclops", path: "./icons/cyclops.png" },
-  { name: "daredevil", path: "./icons/daredevil.png" },
-  { name: "darth sidious", path: "./icons/darth sidious.png" },
-  { name: "darth vader", path: "./icons/darth vader.png" },
-  { name: "deadpool", path: "./icons/deadpool.png" },
-  { name: "dracula", path: "./icons/dracula.png" },
-  { name: "flash", path: "./icons/flash.png" },
-  { name: "frankenstein", path: "./icons/frankenstein.png" },
-  { name: "freddy krueger", path: "./icons/freddy krueger.png" },
-  { name: "frodo", path: "./icons/frodo.png" },
-  { name: "galadriel", path: "./icons/galadriel.png" },
-  { name: "gandalf", path: "./icons/gandalf.png" },
-  { name: "gollum", path: "./icons/gollum.png" },
-  { name: "groot", path: "./icons/groot.png" },
-  { name: "han solo", path: "./icons/han solo.png" },
-  { name: "hawkeye", path: "./icons/hawkeye.png" },
-  { name: "hipster boy", path: "./icons/hipster boy.png" },
-  { name: "hipster girl", path: "./icons/hipster girl.png" },
-  { name: "iron man", path: "./icons/iron man.png" },
-  { name: "jasmine", path: "./icons/jasmine.png" },
-  { name: "jawa", path: "./icons/jawa.png" },
-  { name: "joda", path: "./icons/joda.png" },
-  { name: "john lennon", path: "./icons/john lennon.png" },
-  { name: "joker", path: "./icons/joker.png" },
-  { name: "kevin", path: "./icons/kevin.png" },
-  { name: "legolas", path: "./icons/legolas.png" },
-  { name: "luke skywalker", path: "./icons/luke skywalker.png" },
-  { name: "magneto", path: "./icons/magneto.png" },
-  { name: "megaman", path: "./icons/megaman.png" },
-  { name: "princess leia", path: "./icons/princess leia.png" },
-  { name: "r2d2", path: "./icons/r2d2.png" },
-  { name: "rey", path: "./icons/rey.png" },
-  { name: "sonic", path: "./icons/sonic.png" },
-  { name: "spiderman", path: "./icons/spiderman.png" },
-  { name: "storm trooper", path: "./icons/storm trooper.png" },
-  { name: "stuart", path: "./icons/stuart.png" },
-  { name: "superman", path: "./icons/superman.png" },
-  { name: "thanos", path: "./icons/thanos.png" },
-  { name: "thor", path: "./icons/thor.png" },
-  { name: "tupac", path: "./icons/tupac.png" },
-  { name: "whitesnow", path: "./icons/whitesnow.png" },
-  { name: "wolverine", path: "./icons/wolverine.png" },
-  { name: "wonder woman", path: "./icons/wonder woman.png" },
-];
-
 var globalMax = 0;
 
 function setRandomImage() {
   const imageE = document.getElementById("guess-image");
-  const selectedImage =
-    imagesData[Math.floor(Math.random() * imagesData.length)];
+  const selectedImage = RandomChoice(imagesData);
   imageE.src = selectedImage.path;
   return selectedImage.name;
 }
 
 function getRandomName(set, exclude) {
   filteredSet = set.filter((imgData) => !exclude.includes(imgData.name));
-  return filteredSet[Math.floor(Math.random() * filteredSet.length)].name;
+  return RandomChoice(filteredSet).name;
 }
 
 function setRandomOptions(correctGuess) {
@@ -102,11 +35,6 @@ function Game() {
   let score = 0;
   let exit = false;
 
-  // in milliseconds
-  let roundProgress = 0;
-  const roundIncrement = 10;
-  const roundEndTime = 10000;
-
   function setInitialGame() {
     correctGuess = setRandomImage();
     setRandomOptions(correctGuess);
@@ -116,26 +44,27 @@ function Game() {
     score = 0;
     exit = false;
     setInitialGame();
-    gameTimer = Timer(roundLoop, roundIncrement);
+    gameTimer = Timer(roundLoop, ROUND_INCREMENT);
     gameTimer.init();
   }
 
   const roundLoop = () => {
-    progressBar.increment(roundIncrement / 100);
-    roundProgress += roundIncrement;
+    progressBar.increment(ROUND_INCREMENT);
 
-    if (roundProgress === roundEndTime) {
+    if (progressBar.getProgress() === MAX_ROUND_TIME) {
+      updateScore(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
       correctGuess = setRandomImage();
       setRandomOptions(correctGuess);
-      roundProgress = 0;
       progressBar.reset();
     }
 
     guessOption(correctGuess);
 
     // For seeing round time seconds in the UI
-    document.getElementById(`seconds`).innerText =
-      Math.round(roundProgress / 100, 3) / 10;
+    console.log("progressBar.getProgress()", progressBar.getProgress());
+    document.getElementById(
+      `seconds`
+    ).innerText = progressBar.getProgress().toFixed(1);
 
     if (exit) {
       return null;
@@ -153,7 +82,6 @@ function Game() {
   function stop() {
     gameTimer.stop();
     gameTimer = null;
-    roundProgress = 0;
     progressBar.reset();
     document.getElementById("progress").style.width = `0%`;
     // progressBar = null;
@@ -189,7 +117,10 @@ function Game() {
       const myObservable3 = fromEvent(option3, "click");
       const myObservable4 = fromEvent(option4, "click");
 
-      const subscription1 = myObservable1.subscribe((event) => {
+      const SubscriptionFunctionEvent = (event) => {
+        if (paused) {
+          return;
+        }
         if (globalMax === 0) {
           console.log(correctGuess.toLowerCase());
           console.log(event.toElement.innerText.toLowerCase());
@@ -201,84 +132,28 @@ function Game() {
             event.toElement.innerText.toLowerCase() ===
             correctGuess.toLowerCase()
           ) {
-            updateScore(1);
+            updateScore(
+              (SCORE_PER_CORRECT_ANSWER *
+                (MAX_ROUND_TIME - progressBar.getProgress())) /
+                MAX_ROUND_TIME
+            );
             correctGuess = setRandomImage();
             setRandomOptions(correctGuess);
-            roundProgress = 0;
             progressBar.reset();
           } else {
-            updateScore(-1);
+            updateScore(PENALTY_SCORE_FOR_MISSING);
             correctGuess = setRandomImage();
             setRandomOptions(correctGuess);
-            roundProgress = 0;
             progressBar.reset();
           }
           globalMax += 1;
         }
-      });
-      const subscription2 = myObservable2.subscribe((event) => {
-        if (globalMax === 0) {
-          if (
-            event.toElement.innerText.toLowerCase() ===
-            correctGuess.toLowerCase()
-          ) {
-            updateScore(1);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            roundProgress = 0;
-            progressBar.reset();
-          } else {
-            updateScore(-1);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            roundProgress = 0;
-            progressBar.reset();
-          }
-          globalMax += 1;
-        }
-      });
-      const subscription3 = myObservable3.subscribe((event) => {
-        if (globalMax === 0) {
-          if (
-            event.toElement.innerText.toLowerCase() ===
-            correctGuess.toLowerCase()
-          ) {
-            updateScore(1);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            roundProgress = 0;
-            progressBar.reset();
-          } else {
-            updateScore(-1);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            roundProgress = 0;
-            progressBar.reset();
-          }
-          globalMax += 1;
-        }
-      });
-      const subscription4 = myObservable4.subscribe((event) => {
-        if (globalMax === 0) {
-          if (
-            event.toElement.innerText.toLowerCase() ===
-            correctGuess.toLowerCase()
-          ) {
-            updateScore(1);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            roundProgress = 0;
-            progressBar.reset();
-          } else {
-            updateScore(-1);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            roundProgress = 0;
-            progressBar.reset();
-          }
-          globalMax += 1;
-        }
-      });
+      };
+
+      const subscription1 = myObservable1.subscribe(SubscriptionFunctionEvent);
+      const subscription2 = myObservable2.subscribe(SubscriptionFunctionEvent);
+      const subscription3 = myObservable3.subscribe(SubscriptionFunctionEvent);
+      const subscription4 = myObservable4.subscribe(SubscriptionFunctionEvent);
       globalMax = 0;
       // subscription1.unsubscribe();
       // subscription2.unsubscribe();
@@ -290,7 +165,7 @@ function Game() {
   function updateScore(val) {
     if (!exit) {
       score += val;
-      document.getElementById(`score`).innerText = score;
+      document.getElementById(`score`).innerText = score.toFixed(2);
     }
   }
 
@@ -300,8 +175,13 @@ function Game() {
     pause,
     start,
     stop,
-    toggleGame,
+    toggleGame
   };
 }
 
 const game = Game();
+
+// helper
+
+const RandomChoice = (choices) =>
+  choices[Math.floor(Math.random() * choices.length)];
