@@ -1,13 +1,3 @@
-const { fromEvent } = rxjs;
-const {
-  filter,
-  debounceTime,
-  merge,
-  distinctUntilChanged,
-  first,
-  map,
-} = rxjs.operators;
-
 function setRandomImage() {
   const imageE = document.getElementById("guess-image");
   const selectedImage = RandomChoice(imagesData);
@@ -53,6 +43,8 @@ function Game() {
     scorePlayer2 = 0;
     exit = false;
     setInitialGame();
+    document.getElementById("game-instructions").style.display = 'none';
+    document.getElementById("image-container").style.display = 'block';
     gameTimer = Timer(roundLoop, ROUND_INCREMENT);
     gameTimer.init();
     guessOption();
@@ -93,6 +85,7 @@ function Game() {
     progressBar.reset();
     document.getElementById("progress").style.width = `0%`;
     paused = false;
+    document.getElementById("game-instructions").style.display = 'block';
     document.getElementById("last-round-winner").innerText =
       scorePlayer1 > scorePlayer2 ? "P1" : "P2";
     document.getElementById("last-round-score").innerText =
@@ -105,8 +98,7 @@ function Game() {
     document.getElementById("score-player-1").innerText = scorePlayer1;
     document.getElementById("score-player-2").innerText = scorePlayer2;
     document.getElementById("seconds").innerText = 0;
-    document.getElementById("guess-image").src =
-      "http://icons.iconarchive.com/icons/danleech/simple/1024/dribbble-icon.png";
+    document.getElementById("image-container").style.display = 'none';
     for (let position = 1; position < 5; position++) {
       document.getElementById(`guess${position}`).innerText = "";
     }
@@ -119,13 +111,13 @@ function Game() {
 
   function guessOption() {
     if (!exit) {
-      const ObservablePlayer2Down = fromEvent(document, "keydown");
-      ObservablePlayer2Down.pipe(
+      
+      keyDownObservable$.pipe(
         filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
         map((event) => PLAYER_2_KEYS[event.key])
       ).subscribe((event) => SubscriptionFunctionEvent(event, "player2"));
-      const ObservablePlayer1Down = fromEvent(document, "keydown");
-      ObservablePlayer1Down.pipe(
+
+      keyDownObservable$.pipe(
         filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
         map((event) => PLAYER_1_KEYS[event.key])
       ).subscribe((event) => SubscriptionFunctionEvent(event, "player1"));
