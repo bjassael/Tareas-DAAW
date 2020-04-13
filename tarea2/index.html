@@ -10,19 +10,22 @@
     <h1 class="game-title">Guess This Logo!</h1>
 
     <div class="score">
-      <p>Last Round: </p>
-      <p id="last-round">0</p>
+      <p>Last Winner: </p>
+      <p id="last-round-winner"></p>
+      <p>(</p>
+      <p id="last-round-score">0</p>
+      <p>)</p>
     </div>
-  <div style="display: flex; flex-wrap: wrap; justify-content: space-around; width: 100%;">
-    <div class="score">
-      <h2>Score Player 1: </h2>
-      <h2 id="score-player-1">0</h2>
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-around; width: 100%;">
+      <div class="score">
+        <h2>Score Player 1: </h2>
+        <h2 id="score-player-1">0</h2>
+      </div>
+      <div class="score">
+        <h2>Score Player 2: </h2>
+        <h2 id="score-player-2">0</h2>
+      </div>
     </div>
-    <div class="score">
-      <h2>Score Player 2: </h2>
-      <h2 id="score-player-2">0</h2>
-    </div>
-  </div>
 
     <div id="round-bar">
       <div id="progress"></div>
@@ -41,9 +44,10 @@
     </div>
 
     <div class="game-instructions">
-      <p>Press the `s` key to start the game!</p>
+      <p>Press the `space` key to start the game!</p>
       <p>Press the `space` key to pause/play the game!</p>
-      <p>Click on the option button to submit your guess!</p>
+      <p>Player1 controls: `a s d f`</p>
+      <p>Player2 controls: `h j k l`</p>
       <p>Click on the `q` key to end the current round!</p>
     </div>
 
