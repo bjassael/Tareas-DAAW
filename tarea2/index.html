@@ -2,56 +2,96 @@
 <html>
 
 <meta>
-<link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./button.css">
 </meta>
 
 <body>
+
   <div id="game-container">
-    <h1 class="game-title">Guess This Logo!</h1>
+  
+    <div id="arcade-box">
 
-    <div class="score">
-      <p>Last Winner: </p>
-      <p id="last-round-winner"></p>
-      <p>(</p>
-      <p id="last-round-score">0</p>
-      <p>)</p>
-    </div>
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-around; width: 100%;">
-      <div class="score">
-        <h2>Score Player 1: </h2>
-        <h2 id="score-player-1">0</h2>
+      <div id="arcade-title">
+        <h2 class="game-title">Guess this!</h2>
       </div>
-      <div class="score">
-        <h2>Score Player 2: </h2>
-        <h2 id="score-player-2">0</h2>
+
+
+      <div class="screen-container">
+
+        <div class="screen">
+
+          <div class="score">
+            <p>Last Winner: </p>
+            <p id="last-round-winner"></p>
+            <p>(</p>
+            <p id="last-round-score">0</p>
+            <p>)</p>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-around; width: 100%;">
+
+            <div class="score">
+              <h2>P1: </h2>
+              <h2 id="score-player-1">0</h2>
+            </div>
+            <div class="score">
+              <h2>P2: </h2>
+              <h2 id="score-player-2">0</h2>
+            </div>
+
+          </div>
+
+          <div id="round-bar">
+            <div id="progress"></div>
+          </div>
+
+
+          <div id="game-instructions">
+            <p>Press the `space` key to start the game!</p>
+            <p>Press the `space` key to pause/play the game!</p>
+            <p>Player1 controls: `a s d f`</p>
+            <p>Player2 controls: `h j k l`</p>
+            <p>Click on the `q` key to end the current round!</p>
+          </div>
+
+          <!-- Give attribution for images! -->
+          <div id="image-container">
+            <div id="seconds">0</div>
+            <img id="guess-image"  alt="">
+          </div>
+
+          <div id="guess-container">
+            <div id="guess1"></div>
+            <div id="guess2"></div>
+            <div id="guess3"></div>
+            <div id="guess4"></div>
+          </div>
+
+        </div>
       </div>
-    </div>
 
-    <div id="round-bar">
-      <div id="progress"></div>
-    </div>
+      <div class="buttons-container">
 
-    <div id="seconds">0</div>
-    <!-- Give attribution for images! -->
-    <img id="guess-image" src="http://icons.iconarchive.com/icons/danleech/simple/1024/dribbble-icon.png" alt="">
+        <div>
+          <a class="button" id="p1-button-1" href="#0">A</a>
+          <a class="button" id="p1-button-2" href="#0">S</a>
+          <a class="button" id="p1-button-3" href="#0">D</a>
+          <a class="button" id="p1-button-4" href="#0">F</a>
+        </div>
 
+        <div>
+          <a class="button" id="p2-button-1" href="#0">H</a>
+          <a class="button" id="p2-button-2" href="#0">J</a>
+          <a class="button" id="p2-button-3" href="#0">K</a>
+          <a class="button" id="p2-button-4" href="#0">L</a>
+        </div>
 
-    <div id="guess-container">
-      <div id="guess1"></div>
-      <div id="guess2"></div>
-      <div id="guess3"></div>
-      <div id="guess4"></div>
-    </div>
-
-    <div class="game-instructions">
-      <p>Press the `space` key to start the game!</p>
-      <p>Press the `space` key to pause/play the game!</p>
-      <p>Player1 controls: `a s d f`</p>
-      <p>Player2 controls: `h j k l`</p>
-      <p>Click on the `q` key to end the current round!</p>
+      </div>
     </div>
 
   </div>
+
 </body>
 
 <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.min.js"></script>
@@ -59,6 +99,7 @@
 <script src="./images.js"></script>
 <script src="./Timer.js"></script>
 <script src="./ProgressBar.js"></script>
+<script src="./Rx.js"></script>
 <script src="./index.js"></script>
 <script src="./handleInput.js"></script>
 
