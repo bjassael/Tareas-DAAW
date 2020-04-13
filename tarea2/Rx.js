@@ -1,5 +1,5 @@
-const { fromEvent } = rxjs;
-const { filter, tap } = rxjs.operators;
+const { fromEvent, interval } = rxjs;
+const { pipe, filter, merge, map, tap, throttle } = rxjs.operators;
 
 const handleKeyDown = (event) => {
   const keyName = event.key;

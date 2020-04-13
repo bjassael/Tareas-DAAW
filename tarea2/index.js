@@ -111,27 +111,28 @@ function Game() {
 
   function guessOption() {
     if (!exit) {
-      keyDownObservable$
+      const player2Observable = keyDownObservable$.pipe(
+        filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
+        map((event) => [PLAYER_2_KEYS[event.key], "player2"])
+      );
+      const player1Observable = keyDownObservable$.pipe(
+        filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
+        map((event) => [PLAYER_1_KEYS[event.key], "player1"])
+      );
+      const bothPlayer = player1Observable
         .pipe(
-          filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
-          map((event) => PLAYER_2_KEYS[event.key])
+          merge(player2Observable),
+          throttle((event) => interval(200))
         )
-        .subscribe((event) => SubscriptionFunctionEvent(event, "player2"));
+        .subscribe((event) => SubscriptionFunctionEvent(event));
 
-      keyDownObservable$
-        .pipe(
-          filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
-          map((event) => PLAYER_1_KEYS[event.key])
-        )
-        .subscribe((event) => SubscriptionFunctionEvent(event, "player1"));
-
-      function SubscriptionFunctionEvent(event, player) {
+      function SubscriptionFunctionEvent(event) {
         const updateScore =
-          player === "player1" ? updateScorePlayer1 : updateScorePlayer2;
+          event[1] === "player1" ? updateScorePlayer1 : updateScorePlayer2;
         if (paused) {
           return;
         }
-        if (event.innerText.toLowerCase() === correctGuess.toLowerCase()) {
+        if (event[0].innerText.toLowerCase() === correctGuess.toLowerCase()) {
           updateScore(
             (SCORE_PER_CORRECT_ANSWER *
               (MAX_ROUND_TIME - progressBar.getProgress())) /
