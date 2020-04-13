@@ -15,3 +15,7 @@ const keyDownObservable$ = fromEvent(document, "keydown").pipe(
   filter((event) => Object.keys(KEY_BUTTONS).includes(event.key)),
   tap(handleKeyDown)
 );
+
+const keyUpObservable$ = fromEvent(document, "keyup")
+  .pipe(filter((event) => Object.keys(KEY_BUTTONS).includes(event.key)))
+  .subscribe(handleKeyUp);
