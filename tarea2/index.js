@@ -126,38 +126,41 @@ function Game() {
   }
 
   function guessOption() {
-    if (!exit) {
 
-      const player2Observable$ = keyDownObservable$.pipe(
-        filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
-        map((event) => [PLAYER_2_KEYS[event.key], updateScorePlayer2])
-      );
-      const player1Observable$ = keyDownObservable$.pipe(
-        filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
-        map((event) => [PLAYER_1_KEYS[event.key], updateScorePlayer1])
-      );
+    keyDownObservable$.pipe(
+      filter((event) => exit ? null : event),
+    );
 
-      player1Observable$
-        .pipe(
-          merge(player2Observable$),
-          filter((event) => paused ? null : event),
-          throttle(() => interval(200))
-        )
-        .subscribe((event) => SubscriptionFunctionEvent(event));
+    const player2Observable$ = keyDownObservable$.pipe(
+      filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
+      map((event) => [PLAYER_2_KEYS[event.key], updateScorePlayer2])
+    );
 
-      function SubscriptionFunctionEvent(event) {
-        const updateScore = event[1];
-        if (event[0].innerText.toLowerCase() === correctGuess.toLowerCase()) {
-          updateScore(
-            (SCORE_PER_CORRECT_ANSWER *
-              (MAX_ROUND_TIME - progressBar.getProgress())) /
-              MAX_ROUND_TIME
-          );
-        } else {
-          !exit && updateScore(PENALTY_SCORE_FOR_MISSING);
-        }
-        !exit && resetRound();
+    const player1Observable$ = keyDownObservable$.pipe(
+      filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
+      map((event) => [PLAYER_1_KEYS[event.key], updateScorePlayer1])
+    );
+
+    player1Observable$
+      .pipe(
+        merge(player2Observable$),
+        throttle(() => interval(200)),
+        filter((event) => paused ? null : event),
+      )
+      .subscribe((event) => SubscriptionFunctionEvent(event));
+
+    function SubscriptionFunctionEvent(event) {
+      const updateScore = event[1];
+      if (event[0].innerText.toLowerCase() === correctGuess.toLowerCase()) {
+        updateScore(
+          (SCORE_PER_CORRECT_ANSWER *
+            (MAX_ROUND_TIME - progressBar.getProgress())) /
+            MAX_ROUND_TIME
+        );
+      } else {
+        !exit && updateScore(PENALTY_SCORE_FOR_MISSING);
       }
+      !exit && resetRound();
     }
   }
 
