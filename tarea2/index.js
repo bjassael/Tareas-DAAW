@@ -111,6 +111,7 @@ function Game() {
 
   function stop() {
     setLastWinner();
+    progressBar.reset();
     resetScores();
     gameTimer.stop();
     gameTimer = null;
