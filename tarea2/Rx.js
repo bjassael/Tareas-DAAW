@@ -3,12 +3,18 @@ const { pipe, filter, merge, map, tap, throttle } = rxjs.operators;
 
 const handleKeyDown = (event) => {
   const keyName = event.key;
-  document.getElementById(KEY_BUTTONS[keyName]).classList.add("active");
+  const pressedKey = document.getElementById(KEY_BUTTONS[keyName]);
+  pressedKey.classList.add("active");
+  const guessOptionId = pressedKey.dataset.option;
+  document.getElementById(guessOptionId).classList.add("active");
 };
 
 const handleKeyUp = (event) => {
   const keyName = event.key;
-  document.getElementById(KEY_BUTTONS[keyName]).classList.remove("active");
+  const pressedKey = document.getElementById(KEY_BUTTONS[keyName]);
+  pressedKey.classList.remove("active");
+  const guessOptionId = pressedKey.dataset.option;
+  document.getElementById(guessOptionId).classList.remove("active");
 };
 
 const keyDownObservable$ = fromEvent(document, "keydown").pipe(

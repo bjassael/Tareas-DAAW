@@ -124,26 +124,25 @@ function Game() {
 
   function guessOption() {
     if (!exit) {
-      const player2Observable = keyDownObservable$.pipe(
+      const player2Observable$ = keyDownObservable$.pipe(
         filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
-        map((event) => [PLAYER_2_KEYS[event.key], "player2"])
+        map((event) => [PLAYER_2_KEYS[event.key], updateScorePlayer2])
       );
-      const player1Observable = keyDownObservable$.pipe(
+      const player1Observable$ = keyDownObservable$.pipe(
         filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
-        map((event) => [PLAYER_1_KEYS[event.key], "player1"])
+        map((event) => [PLAYER_1_KEYS[event.key], updateScorePlayer1])
       );
-      player1Observable
+      player1Observable$
         .pipe(
-          merge(player2Observable),
-          throttle(() => interval(200))
+          merge(player2Observable$),
+          filter((event) => paused ? null : event),
+          throttle(() => interval(200)),
         )
         .subscribe((event) => SubscriptionFunctionEvent(event));
 
       function SubscriptionFunctionEvent(event) {
-        if (paused) { return };
 
-        const updateScore =
-          event[1] === "player1" ? updateScorePlayer1 : updateScorePlayer2;
+        const updateScore = event[1]
         if (event[0].innerText.toLowerCase() === correctGuess.toLowerCase()) {
           updateScore(
             (SCORE_PER_CORRECT_ANSWER *
