@@ -1,0 +1,58 @@
+.button {
+  cursor: pointer;
+  margin-left:5px;
+  margin-bottom:15px;
+  box-sizing:border-box;
+  font-size:2em;
+  font-family: Helvetica, Arial, Sans-Serif;
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+  height: 65px;
+  line-height: 65px;
+  padding: 0 35px;
+  display: inline-block;
+  width: auto;
+  background: silver;
+  border-radius:5px;
+  border-top:1px solid grey;
+  border-bottom: 1px solid grey;
+  top: 0;
+  transition: all (0.6s) ease-out;
+  position: relative;
+}
+
+.button:active {
+  top: 6px;
+  /* text-shadow:0 -2px 0 coral,0 1px 1px salmon, 0 0 4px white ; */
+  /* color: greenyellow; */
+}
+.button:active:before {
+  top: 0;
+  box-shadow: 0 3px 3px rgba(0,0,0,.7),0 3px 9px rgba(0,0,0,.2);
+}
+
+.button.active {
+  top: 6px;
+  /* text-shadow:0 -2px 0 coral,0 1px 1px salmon, 0 0 4px white ; */
+  /* color: greenyellow; */
+}
+.button.active:before {
+  top: 0;
+  box-shadow: 0 3px 3px rgba(0,0,0,.7),0 3px 9px rgba(0,0,0,.2);
+}
+
+.button:before {
+  display:inline-block;
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  z-index:-1;
+  top:6px;
+  border-radius:5px;
+  height:65px;
+  background: linear-gradient(to top, grey, silver 6px);
+  transition:all (1s) ease-out;
+  box-shadow: 0 1px 0 2px rgba(0,0,0,.3), 0 5px 2.4px rgba(0,0,0,.5), 0 10px 9px rgba(0,0,0,.2);
+}
