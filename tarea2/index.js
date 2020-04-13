@@ -34,18 +34,22 @@ function Game() {
   let correctGuess;
   guessOption();
 
+  function resetScores() {
+    scorePlayer1 = 0;
+    scorePlayer2 = 0;
+  }
+
   function setInitialGame() {
+    resetScores();
+    document.getElementById("game-instructions").style.display = "none";
+    document.getElementById("image-container").style.display = "block";
     correctGuess = setRandomImage();
     setRandomOptions(correctGuess);
   }
 
   function init() {
-    scorePlayer1 = 0;
-    scorePlayer2 = 0;
     exit = false;
     setInitialGame();
-    document.getElementById("game-instructions").style.display = "none";
-    document.getElementById("image-container").style.display = "block";
     gameTimer = Timer(roundLoop, ROUND_INCREMENT);
     gameTimer.init();
   }
@@ -56,9 +60,7 @@ function Game() {
     if (progressBar.getProgress() === MAX_ROUND_TIME) {
       updateScorePlayer1(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
       updateScorePlayer2(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
-      correctGuess = setRandomImage();
-      setRandomOptions(correctGuess);
-      progressBar.reset();
+      resetRound();
     }
 
     // For seeing round time seconds in the UI
@@ -71,6 +73,32 @@ function Game() {
     }
   };
 
+  function resetRound() {
+    correctGuess = setRandomImage();
+    setRandomOptions(correctGuess);
+    progressBar.reset();
+  }
+
+  function resetUI() {
+    document.getElementById("game-instructions").style.display = "block";
+    document.getElementById("image-container").style.display = "none";
+    document.getElementById("score-player-1").innerText = 0;
+    document.getElementById("score-player-2").innerText = 0;
+    document.getElementById("seconds").innerText = 0;
+    for (let position = 1; position < 5; position++) {
+      document.getElementById(`guess${position}`).innerText = "";
+    }
+  }
+
+  function setLastWinner() {
+    document.getElementById("last-round-winner").innerText =
+    scorePlayer1 > scorePlayer2 ? "P1" : "P2";
+    document.getElementById("last-round-score").innerText =
+    scorePlayer1 > scorePlayer2
+      ? scorePlayer1.toFixed(2)
+      : scorePlayer2.toFixed(2);
+  }
+
   function pause() {
     gameTimer && gameTimer.pause();
   }
@@ -80,28 +108,13 @@ function Game() {
   }
 
   function stop() {
+    setLastWinner();
+    resetScores();
     gameTimer.stop();
     gameTimer = null;
-    progressBar.reset();
-    document.getElementById("progress").style.width = `0%`;
     paused = false;
-    document.getElementById("game-instructions").style.display = "block";
-    document.getElementById("last-round-winner").innerText =
-      scorePlayer1 > scorePlayer2 ? "P1" : "P2";
-    document.getElementById("last-round-score").innerText =
-      scorePlayer1 > scorePlayer2
-        ? scorePlayer1.toFixed(2)
-        : scorePlayer2.toFixed(2);
-    scorePlayer1 = 0;
-    scorePlayer2 = 0;
+    resetUI();
     exit = true;
-    document.getElementById("score-player-1").innerText = scorePlayer1;
-    document.getElementById("score-player-2").innerText = scorePlayer2;
-    document.getElementById("seconds").innerText = 0;
-    document.getElementById("image-container").style.display = "none";
-    for (let position = 1; position < 5; position++) {
-      document.getElementById(`guess${position}`).innerText = "";
-    }
   }
 
   function toggleGame() {
@@ -119,38 +132,28 @@ function Game() {
         filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
         map((event) => [PLAYER_1_KEYS[event.key], "player1"])
       );
-      const bothPlayer = player1Observable
+      player1Observable
         .pipe(
           merge(player2Observable),
-          throttle((event) => interval(200))
+          throttle(() => interval(200))
         )
         .subscribe((event) => SubscriptionFunctionEvent(event));
 
       function SubscriptionFunctionEvent(event) {
+        if (paused) { return };
+
         const updateScore =
           event[1] === "player1" ? updateScorePlayer1 : updateScorePlayer2;
-        if (paused) {
-          return;
-        }
         if (event[0].innerText.toLowerCase() === correctGuess.toLowerCase()) {
           updateScore(
             (SCORE_PER_CORRECT_ANSWER *
               (MAX_ROUND_TIME - progressBar.getProgress())) /
               MAX_ROUND_TIME
           );
-          if (!exit) {
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            progressBar.reset();
-          }
         } else {
-          if (!exit) {
-            updateScore(PENALTY_SCORE_FOR_MISSING);
-            correctGuess = setRandomImage();
-            setRandomOptions(correctGuess);
-            progressBar.reset();
-          }
+          !exit && updateScore(PENALTY_SCORE_FOR_MISSING);
         }
+        !exit && resetRound();
       }
     }
   }

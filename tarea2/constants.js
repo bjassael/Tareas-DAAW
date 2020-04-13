@@ -7,7 +7,7 @@ const SCORE_PER_CORRECT_ANSWER = 5;
 const PENALTY_SCORE_FOR_MISSING = -5;
 const PENALTY_SCORE_FOR_EXCEED_MAX_TIME = -3;
 
-// grab button reference
+// button reference
 const option1 = document.getElementById("guess1");
 const option2 = document.getElementById("guess2");
 const option3 = document.getElementById("guess3");

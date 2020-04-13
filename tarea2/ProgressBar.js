@@ -12,6 +12,7 @@ function ProgressBar() {
   }
   function reset() {
     progress = 0;
+    document.getElementById("progress").style.width = `0%`;
   }
 
   return {
