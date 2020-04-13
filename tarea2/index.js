@@ -56,7 +56,9 @@ function Game() {
 
   const roundLoop = () => {
     progressBar.increment(ROUND_INCREMENT);
-
+    if (scorePlayer1 >= MAX_SCORE || scorePlayer2 >= MAX_SCORE) {
+      return stop();
+    }
     if (progressBar.getProgress() === MAX_ROUND_TIME) {
       updateScorePlayer1(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
       updateScorePlayer2(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
@@ -92,11 +94,11 @@ function Game() {
 
   function setLastWinner() {
     document.getElementById("last-round-winner").innerText =
-    scorePlayer1 > scorePlayer2 ? "P1" : "P2";
+      scorePlayer1 > scorePlayer2 ? "P1" : "P2";
     document.getElementById("last-round-score").innerText =
-    scorePlayer1 > scorePlayer2
-      ? scorePlayer1.toFixed(2)
-      : scorePlayer2.toFixed(2);
+      scorePlayer1 > scorePlayer2
+        ? scorePlayer1.toFixed(2)
+        : scorePlayer2.toFixed(2);
   }
 
   function pause() {
@@ -124,6 +126,7 @@ function Game() {
 
   function guessOption() {
     if (!exit) {
+
       const player2Observable$ = keyDownObservable$.pipe(
         filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
         map((event) => [PLAYER_2_KEYS[event.key], updateScorePlayer2])
@@ -132,17 +135,17 @@ function Game() {
         filter((event) => Object.keys(PLAYER_1_KEYS).includes(event.key)),
         map((event) => [PLAYER_1_KEYS[event.key], updateScorePlayer1])
       );
+
       player1Observable$
         .pipe(
           merge(player2Observable$),
           filter((event) => paused ? null : event),
-          throttle(() => interval(200)),
+          throttle(() => interval(200))
         )
         .subscribe((event) => SubscriptionFunctionEvent(event));
 
       function SubscriptionFunctionEvent(event) {
-
-        const updateScore = event[1]
+        const updateScore = event[1];
         if (event[0].innerText.toLowerCase() === correctGuess.toLowerCase()) {
           updateScore(
             (SCORE_PER_CORRECT_ANSWER *

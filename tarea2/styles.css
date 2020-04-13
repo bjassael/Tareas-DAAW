@@ -129,15 +129,15 @@ body, html{
   flex: 1;
 }
 
-#guess-container > div.active-p1 {
+#guess-container > div.active {
   border: 2px yellow solid;
   background-color: goldenrod;
 }
 
-#guess-container > div.active-p2 {
+/* #guess-container > div.active-p2 {
   border: 2px seashell solid;
   background-color: rebeccapurple;
-}
+} */
 
 
 .score h2,
