@@ -56,7 +56,9 @@ function Game() {
 
   const roundLoop = () => {
     progressBar.increment(ROUND_INCREMENT);
-
+    if (scorePlayer1 >= MAX_SCORE || scorePlayer2 >= MAX_SCORE) {
+      return stop();
+    }
     if (progressBar.getProgress() === MAX_ROUND_TIME) {
       updateScorePlayer1(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
       updateScorePlayer2(PENALTY_SCORE_FOR_EXCEED_MAX_TIME);
@@ -92,11 +94,11 @@ function Game() {
 
   function setLastWinner() {
     document.getElementById("last-round-winner").innerText =
-    scorePlayer1 > scorePlayer2 ? "P1" : "P2";
+      scorePlayer1 > scorePlayer2 ? "P1" : "P2";
     document.getElementById("last-round-score").innerText =
-    scorePlayer1 > scorePlayer2
-      ? scorePlayer1.toFixed(2)
-      : scorePlayer2.toFixed(2);
+      scorePlayer1 > scorePlayer2
+        ? scorePlayer1.toFixed(2)
+        : scorePlayer2.toFixed(2);
   }
 
   function pause() {
@@ -140,7 +142,9 @@ function Game() {
         .subscribe((event) => SubscriptionFunctionEvent(event));
 
       function SubscriptionFunctionEvent(event) {
-        if (paused) { return };
+        if (paused) {
+          return;
+        }
 
         const updateScore =
           event[1] === "player1" ? updateScorePlayer1 : updateScorePlayer2;
