@@ -5,10 +5,8 @@ const {
   merge,
   distinctUntilChanged,
   first,
-  map
+  map,
 } = rxjs.operators;
-
-var globalMax = 0;
 
 function setRandomImage() {
   const imageE = document.getElementById("guess-image");
@@ -95,6 +93,12 @@ function Game() {
     progressBar.reset();
     document.getElementById("progress").style.width = `0%`;
     paused = false;
+    document.getElementById("last-round-winner").innerText =
+      scorePlayer1 > scorePlayer2 ? "P1" : "P2";
+    document.getElementById("last-round-score").innerText =
+      scorePlayer1 > scorePlayer2
+        ? scorePlayer1.toFixed(2)
+        : scorePlayer2.toFixed(2);
     scorePlayer1 = 0;
     scorePlayer2 = 0;
     exit = true;
@@ -138,14 +142,18 @@ function Game() {
               (MAX_ROUND_TIME - progressBar.getProgress())) /
               MAX_ROUND_TIME
           );
-          correctGuess = setRandomImage();
-          setRandomOptions(correctGuess);
-          progressBar.reset();
+          if (!exit) {
+            correctGuess = setRandomImage();
+            setRandomOptions(correctGuess);
+            progressBar.reset();
+          }
         } else {
-          updateScore(PENALTY_SCORE_FOR_MISSING);
-          correctGuess = setRandomImage();
-          setRandomOptions(correctGuess);
-          progressBar.reset();
+          if (!exit) {
+            updateScore(PENALTY_SCORE_FOR_MISSING);
+            correctGuess = setRandomImage();
+            setRandomOptions(correctGuess);
+            progressBar.reset();
+          }
         }
       }
     }
@@ -174,7 +182,7 @@ function Game() {
     pause,
     start,
     stop,
-    toggleGame
+    toggleGame,
   };
 }
 
