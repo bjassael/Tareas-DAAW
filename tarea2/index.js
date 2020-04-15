@@ -126,10 +126,7 @@ function Game() {
   }
 
   function guessOption() {
-
-    keyDownObservable$.pipe(
-      filter((event) => exit ? null : event),
-    );
+    keyDownObservable$.pipe(filter((event) => (exit ? null : event)));
 
     const player2Observable$ = keyDownObservable$.pipe(
       filter((event) => Object.keys(PLAYER_2_KEYS).includes(event.key)),
@@ -145,13 +142,17 @@ function Game() {
       .pipe(
         merge(player2Observable$),
         throttle(() => interval(200)),
-        filter((event) => paused ? null : event),
+        filter((event) => (paused ? null : event))
       )
       .subscribe((event) => SubscriptionFunctionEvent(event));
 
     function SubscriptionFunctionEvent(event) {
       const updateScore = event[1];
-      if (event[0].innerText.toLowerCase() === correctGuess.toLowerCase()) {
+      if (!event[0].innerText) {
+        return;
+      } else if (
+        event[0].innerText.toLowerCase() === correctGuess.toLowerCase()
+      ) {
         updateScore(
           (SCORE_PER_CORRECT_ANSWER *
             (MAX_ROUND_TIME - progressBar.getProgress())) /
