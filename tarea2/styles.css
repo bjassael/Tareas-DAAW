@@ -39,6 +39,7 @@ body, html{
 }
 
 #arcade-box {
+  z-index: 1;
   display: flex;
   background-color: #4B5B61;
   flex-direction: column;
