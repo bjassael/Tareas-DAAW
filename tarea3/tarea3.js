@@ -5,7 +5,7 @@ startingNumber = 3;
 
 
 const constructInitialSet = (number) => 
-  [new Set([number]), new Set([number, number * 2, number ** 2])];
+  [new Set([number]), new Set([number * 2, number ** 2])];
 
 sets = [constructInitialSet(startingNumber)]
 
