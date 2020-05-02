@@ -80,21 +80,46 @@ function RecursiveFunction(numberToPush = 1) {
   return RecursiveFunction(numberToPush);
 }
 
-var setsGenerated = {};
-var MAX_LEN = 47;
-var MAX_NUMBER_FROM_SET = Infinity;
-var finalArray = [];
-const start = new Date().getTime();
-if (MAX_LEN < 2) {
-  console.log("no hay solución");
-} else if (MAX_LEN == 2) {
-  finalArray = [1];
-  findListFromStartingNumber(1);
-} else {
+var setsGenerated;
+var MAX_LEN;
+var MAX_NUMBER_FROM_SET;
+var finalArray;
+
+const calculateSet = () => {
+  MAX_LEN = Number(document.getElementById("number").value);
+  MAX_NUMBER_FROM_SET = Infinity;
+  setsGenerated = {};
+  finalArray = [];
+  console.log(MAX_LEN);
+
+  try {
+    if (MAX_LEN > 47 || MAX_LEN <= 2) {
+      throw Error;
+    } else {
+      document.getElementById("error").innerText = "";
+    }
+  } catch (Error) {
+    document.getElementById("error").innerText =
+      "Por favor ingrese un número entre 3 y 47 (ambos incluidos).";
+    return;
+  }
+
+  const start = new Date().getTime();
   RecursiveFunction();
-}
-const end = new Date().getTime();
-console.log("finalArray", finalArray);
-const time = end - start;
-console.log("time", time);
-// console.log("object", setsGenerated);
+  const end = new Date().getTime();
+  console.log("finalArray", finalArray);
+
+  const time = end - start;
+  console.log("time", time);
+
+  let text = "{";
+  finalArray.forEach((x) => {
+    text += x + ", ";
+  });
+  text = text.substring(0, text.length - 2);
+  text += "}";
+  document.getElementById("duration").innerText = `${time / 1000} segundos`;
+  document.getElementById("result").innerText = `${text}`;
+};
+
+calculateSet();
