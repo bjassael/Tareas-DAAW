@@ -13,7 +13,7 @@
 <body>
 
   <div class="spinner" id='spinner'></div>
-  <div class="emscripten" id="status">Downloading...</div>
+  <div class="emscripten" id="status">Loading...</div>
 
   <div class="emscripten">
     <progress value="0" max="100" id="progress" hidden=1></progress>
@@ -29,9 +29,9 @@
   </div>
 
 
-  <div class="emscripten_border">
+  <!-- <div class="emscripten_border">
     <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
-  </div>
+  </div> -->
   <textarea id="output" rows="8"></textarea>
 
   <script type='text/javascript'>
@@ -63,19 +63,19 @@
         if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
         console.error(text);
       },
-      canvas: (function () {
-        var canvas = document.getElementById('canvas');
+      // canvas: (function () {
+      //   var canvas = document.getElementById('canvas');
 
-        // As a default initial behavior, pop up an alert when webgl context is lost. To make your
-        // application robust, you may want to override this behavior before shipping!
-        // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
-        canvas.addEventListener("webglcontextlost", function (e) {
-          alert('WebGL context lost. You will need to reload the page.');
-          e.preventDefault();
-        }, false);
+      //   // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+      //   // application robust, you may want to override this behavior before shipping!
+      //   // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+      //   canvas.addEventListener("webglcontextlost", function (e) {
+      //     alert('WebGL context lost. You will need to reload the page.');
+      //     e.preventDefault();
+      //   }, false);
 
-        return canvas;
-      })(),
+      //   return canvas;
+      // })(),
       setStatus: function (text) {
         if (!Module.setStatus.last) Module.setStatus.last = {
           time: Date.now(),
@@ -108,7 +108,7 @@
           ')' : 'All downloads complete.');
       }
     };
-    Module.setStatus('Downloading...');
+    Module.setStatus('Loading...');
     window.onerror = function (event) {
       // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
       Module.setStatus('Exception thrown, see JavaScript console');
