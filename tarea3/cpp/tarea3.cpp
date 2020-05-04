@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include <limits>
-#include <ctime>
+#include <chrono>
 
 std::string ArrayToString(std::vector<int> set)
 {
@@ -167,8 +167,6 @@ void RecursiveFunction(
 
 int main(int argc, char *argv[])
 {
-  time_t start, finish;
-
   std::map<std::string, std::string> m;
   std::map<std::string, MaybeGeneratedTree> setsGenerated;
 
@@ -182,10 +180,12 @@ int main(int argc, char *argv[])
     if (MAX_LEN >= 3 && MAX_LEN <= 47)
     {
       std::cout << "n = " << MAX_LEN << "\n";
-      time(&start);
+      clock_t time = clock();
       RecursiveFunction(1, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated, finalArray);
-      time(&finish);
-      std::cout << difftime(finish, start) << " segundos"
+      time = clock() - time;
+      double duration = double(time) / CLOCKS_PER_SEC;
+
+      std::cout << duration << " segundos"
                 << "\n";
       std::cout << "finalArray: " << ArrayToString(finalArray) << "\n";
     }
