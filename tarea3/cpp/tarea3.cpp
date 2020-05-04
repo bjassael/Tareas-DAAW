@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <map>
 #include <string>
@@ -17,35 +18,28 @@ std::string ArrayToString(std::vector<int> set)
   return returnString;
 }
 
+std::string HashArrayToString(std::vector<int> set)
+{
+  return std::string(set.begin(), set.end());
+}
+
 class MaybeGeneratedTree
 {
   // Access specifier
 public:
   // Data Members
-  std::map<int, bool> dictionary;
-  std::vector<int> _set;     // [1, 2]  || [1, 3]
   std::vector<int> _results; // [1, 2, 0 ,0, 0, 0] || [1, 2, 3, 4, 6, 9]
   bool isValid = true;
 
   bool pushValue(int value)
   {
-    if (dictionary[value])
+    if (std::find(_results.begin(), _results.end(), value) != _results.end())
     {
       isValid = false;
       return false;
     }
     _results.push_back(value);
-    dictionary[value] = true;
     return true;
-  }
-
-  void printSet()
-  {
-    std::cout << "array: " << ArrayToString(_set) << "\n";
-  }
-  void printResults()
-  {
-    std::cout << "array: " << ArrayToString(_results) << "\n";
   }
 };
 
@@ -58,8 +52,6 @@ MaybeGeneratedTree generateSetTree(std::vector<int> set, bool parentIsValid)
     maybeResultSet.isValid = false;
     return maybeResultSet;
   }
-
-  maybeResultSet._set = set;
 
   int start = 0;
   for (int number : set)
@@ -90,20 +82,17 @@ bool IsValidNumberOnSetToAdd(
   {
     return true;
   }
-  if (setsGenerated.count(ArrayToString(set)) == 0)
+  std::string hash = HashArrayToString(set);
+  if (setsGenerated.count(hash) == 0)
   {
-    setsGenerated.emplace(ArrayToString(set), generateSetTree(set, true));
+    setsGenerated.emplace(hash, generateSetTree(set, true));
   }
 
   std::vector<int> newSet(set.begin(), set.end());
   newSet.push_back(numberToAdd);
 
-  std::vector<int> newResults(
-      setsGenerated[ArrayToString(set)]._results.begin(),
-      setsGenerated[ArrayToString(set)]._results.end());
-
-  MaybeGeneratedTree generatedTree = generateSetTree(newSet, setsGenerated[ArrayToString(set)].isValid);
-  setsGenerated.emplace(ArrayToString(newSet), generatedTree);
+  MaybeGeneratedTree generatedTree = generateSetTree(newSet, setsGenerated[hash].isValid);
+  setsGenerated.emplace(HashArrayToString(newSet), generatedTree);
 
   if (!generatedTree.isValid)
   {
@@ -119,15 +108,13 @@ std::vector<int> FindListFromStartingNumber(
     std::map<std::string, MaybeGeneratedTree> &setsGenerated)
 {
   std::vector<int> listOfNumbers;
-  // std::cout << "numberToStart: " << numberToStart << "\n";
   while (
       listOfNumbers.size() < MAX_LEN &&
       numberToStart <= MAX_NUMBER_FROM_SET)
   {
     std::vector<int> newCombination(listOfNumbers.begin(), listOfNumbers.end());
     newCombination.push_back(numberToStart);
-    // std::cout << "newCombination: " << ArrayToString(newCombination) << "\n";
-    if ((setsGenerated.count(ArrayToString(newCombination)) == 0 || listOfNumbers.size() == 0) &&
+    if ((setsGenerated.count(HashArrayToString(newCombination)) == 0 || listOfNumbers.size() == 0) &&
         numberToStart != 2)
     {
       if (IsValidNumberOnSetToAdd(numberToStart, listOfNumbers, setsGenerated))
@@ -137,7 +124,6 @@ std::vector<int> FindListFromStartingNumber(
     }
     numberToStart++;
   }
-  // std::cout << "listOfNumbers.size(): " << listOfNumbers.size() << "\n";
   return listOfNumbers;
 }
 
@@ -149,9 +135,6 @@ void RecursiveFunction(
     std::vector<int> &finalArray)
 {
   std::vector<int> response = FindListFromStartingNumber(numberToPush, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated);
-  // std::cout << "response: " << ArrayToString(response) << "\n";
-  // std::cout << "MAX_NUMBER_FROM_SET: " << MAX_NUMBER_FROM_SET << "\n";
-  // std::cout << "numberToPush: " << numberToPush << "\n";
   if (response.size() < MAX_LEN)
   {
     if (numberToPush + MAX_LEN > MAX_NUMBER_FROM_SET)
