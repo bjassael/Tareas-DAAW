@@ -863,8 +863,8 @@ var wasmMemory;
 // In the wasm backend, we polyfill the WebAssembly object,
 // so this creates a (non-native-wasm) table for us.
 var wasmTable = new WebAssembly.Table({
-  initial: 346,
-  maximum: 346 + 0,
+  initial: 353,
+  maximum: 353 + 0,
   element: "anyfunc",
 });
 
@@ -1534,11 +1534,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-  STACK_BASE = 5264032,
+  STACK_BASE = 5264592,
   STACKTOP = STACK_BASE,
-  STACK_MAX = 21152,
-  DYNAMIC_BASE = 5264032,
-  DYNAMICTOP_PTR = 20992;
+  STACK_MAX = 21712,
+  DYNAMIC_BASE = 5264592,
+  DYNAMICTOP_PTR = 21552;
 
 assert(STACK_BASE % 16 === 0, "stack must start aligned");
 assert(DYNAMIC_BASE % 16 === 0, "heap must start aligned");
@@ -1602,7 +1602,7 @@ if (Module["wasmMemory"]) {
 } else {
   wasmMemory = new WebAssembly.Memory({
     initial: INITIAL_INITIAL_MEMORY / WASM_PAGE_SIZE,
-    maximum: INITIAL_INITIAL_MEMORY / WASM_PAGE_SIZE,
+    maximum: 2147483648 / WASM_PAGE_SIZE,
   });
 }
 
@@ -1614,6 +1614,7 @@ if (wasmMemory) {
 // specifically provide the memory length with Module['INITIAL_MEMORY'].
 INITIAL_INITIAL_MEMORY = buffer.byteLength;
 assert(INITIAL_INITIAL_MEMORY % WASM_PAGE_SIZE === 0);
+assert(65536 % WASM_PAGE_SIZE === 0);
 updateGlobalBufferAndViews(buffer);
 
 HEAP32[DYNAMICTOP_PTR >> 2] = DYNAMIC_BASE;
@@ -2151,7 +2152,7 @@ var tempI64;
 
 var ASM_CONSTS = {};
 
-// STATICTOP = STATIC_BASE + 20128;
+// STATICTOP = STATIC_BASE + 20688;
 /* global initializers */ __ATINIT__.push({
   func: function () {
     ___wasm_call_ctors();
@@ -2199,6 +2200,10 @@ function stackTrace() {
   return demangleAll(js);
 }
 
+function ___cxa_allocate_exception(size) {
+  return _malloc(size);
+}
+
 function _atexit(func, arg) {
   warnOnce(
     "atexit() called, but EXIT_RUNTIME is not set, so atexits() will not be called. set EXIT_RUNTIME to 1 (see the FAQ)"
@@ -2207,6 +2212,36 @@ function _atexit(func, arg) {
 }
 function ___cxa_atexit(a0, a1) {
   return _atexit(a0, a1);
+}
+
+var ___exception_infos = {};
+
+var ___exception_last = 0;
+
+function __ZSt18uncaught_exceptionv() {
+  // std::uncaught_exception()
+  return __ZSt18uncaught_exceptionv.uncaught_exceptions > 0;
+}
+function ___cxa_throw(ptr, type, destructor) {
+  ___exception_infos[ptr] = {
+    ptr: ptr,
+    adjusted: [ptr],
+    type: type,
+    destructor: destructor,
+    refcount: 0,
+    caught: false,
+    rethrown: false,
+  };
+  ___exception_last = ptr;
+  if (!("uncaught_exception" in __ZSt18uncaught_exceptionv)) {
+    __ZSt18uncaught_exceptionv.uncaught_exceptions = 1;
+  } else {
+    __ZSt18uncaught_exceptionv.uncaught_exceptions++;
+  }
+  throw (
+    ptr +
+    " - Exception catching is disabled, this exception cannot be caught. Compile with -s DISABLE_EXCEPTION_CATCHING=0 or DISABLE_EXCEPTION_CATCHING=2 to catch."
+  );
 }
 
 function ___handle_stack_overflow() {
@@ -2789,6 +2824,22 @@ var MEMFS = {
     write: function (stream, buffer, offset, length, position, canOwn) {
       // The data buffer should be a typed array view
       assert(!(buffer instanceof ArrayBuffer));
+      // If the buffer is located in main memory (HEAP), and if
+      // memory can grow, we can't hold on to references of the
+      // memory buffer, as they may get invalidated. That means we
+      // need to do copy its contents.
+      if (buffer.buffer === HEAP8.buffer) {
+        // FIXME: this is inefficient as the file packager may have
+        //        copied the data into memory already - we may want to
+        //        integrate more there and let the file packager loading
+        //        code be able to query if memory growth is on or off.
+        if (canOwn) {
+          warnOnce(
+            "file packager has copied file data into memory, but in memory growth we are forced to copy it again (see --no-heap-copy)"
+          );
+        }
+        canOwn = false;
+      }
 
       if (!length) return 0;
       var node = stream.node;
@@ -5416,8 +5467,12 @@ function _abort() {
   abort();
 }
 
+function _difftime(time1, time0) {
+  return time1 - time0;
+}
+
 function _emscripten_get_sbrk_ptr() {
-  return 20992;
+  return 21552;
 }
 
 function _emscripten_memcpy_big(dest, src, num) {
@@ -5428,18 +5483,86 @@ function _emscripten_get_heap_size() {
   return HEAPU8.length;
 }
 
-function abortOnCannotGrowMemory(requestedSize) {
-  abort(
-    "Cannot enlarge memory arrays to size " +
-      requestedSize +
-      " bytes (OOM). Either (1) compile with  -s INITIAL_MEMORY=X  with X higher than the current value " +
-      HEAP8.length +
-      ", (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 "
-  );
+function emscripten_realloc_buffer(size) {
+  try {
+    // round size grow request up to wasm page size (fixed 64KB per spec)
+    wasmMemory.grow((size - buffer.byteLength + 65535) >>> 16); // .grow() takes a delta compared to the previous size
+    updateGlobalBufferAndViews(wasmMemory.buffer);
+    return 1 /*success*/;
+  } catch (e) {
+    console.error(
+      "emscripten_realloc_buffer: Attempted to grow heap from " +
+        buffer.byteLength +
+        " bytes to " +
+        size +
+        " bytes, but got error: " +
+        e
+    );
+  }
 }
 function _emscripten_resize_heap(requestedSize) {
   requestedSize = requestedSize >>> 0;
-  abortOnCannotGrowMemory(requestedSize);
+  var oldSize = _emscripten_get_heap_size();
+  // With pthreads, races can happen (another thread might increase the size in between), so return a failure, and let the caller retry.
+  assert(requestedSize > oldSize);
+
+  var PAGE_MULTIPLE = 65536;
+
+  // Memory resize rules:
+  // 1. When resizing, always produce a resized heap that is at least 16MB (to avoid tiny heap sizes receiving lots of repeated resizes at startup)
+  // 2. Always increase heap size to at least the requested size, rounded up to next page multiple.
+  // 3a. If MEMORY_GROWTH_LINEAR_STEP == -1, excessively resize the heap geometrically: increase the heap size according to
+  //                                         MEMORY_GROWTH_GEOMETRIC_STEP factor (default +20%),
+  //                                         At most overreserve by MEMORY_GROWTH_GEOMETRIC_CAP bytes (default 96MB).
+  // 3b. If MEMORY_GROWTH_LINEAR_STEP != -1, excessively resize the heap linearly: increase the heap size by at least MEMORY_GROWTH_LINEAR_STEP bytes.
+  // 4. Max size for the heap is capped at 2048MB-PAGE_MULTIPLE, or by MAXIMUM_MEMORY, or by ASAN limit, depending on which is smallest
+  // 5. If we were unable to allocate as much memory, it may be due to over-eager decision to excessively reserve due to (3) above.
+  //    Hence if an allocation fails, cut down on the amount of excess growth, in an attempt to succeed to perform a smaller allocation.
+
+  // A limit was set for how much we can grow. We should not exceed that
+  // (the wasm binary specifies it, so if we tried, we'd fail anyhow).
+  var maxHeapSize = 2147483648;
+  if (requestedSize > maxHeapSize) {
+    err(
+      "Cannot enlarge memory, asked to go up to " +
+        requestedSize +
+        " bytes, but the limit is " +
+        maxHeapSize +
+        " bytes!"
+    );
+    return false;
+  }
+
+  var minHeapSize = 16777216;
+
+  // Loop through potential heap size increases. If we attempt a too eager reservation that fails, cut down on the
+  // attempted size and reserve a smaller bump instead. (max 3 times, chosen somewhat arbitrarily)
+  for (var cutDown = 1; cutDown <= 4; cutDown *= 2) {
+    var overGrownHeapSize = oldSize * (1 + 0.2 / cutDown); // ensure geometric growth
+    // but limit overreserving (default to capping at +96MB overgrowth at most)
+    overGrownHeapSize = Math.min(overGrownHeapSize, requestedSize + 100663296);
+
+    var newSize = Math.min(
+      maxHeapSize,
+      alignUp(
+        Math.max(minHeapSize, requestedSize, overGrownHeapSize),
+        PAGE_MULTIPLE
+      )
+    );
+
+    var replacement = emscripten_realloc_buffer(newSize);
+    if (replacement) {
+      return true;
+    }
+  }
+  err(
+    "Failed to grow the heap from " +
+      oldSize +
+      " bytes to " +
+      newSize +
+      " bytes, not enough memory!"
+  );
+  return false;
 }
 
 var ENV = {};
@@ -6002,6 +6125,14 @@ function _strftime(s, maxsize, format, tm) {
 function _strftime_l(s, maxsize, format, tm) {
   return _strftime(s, maxsize, format, tm); // no locale support yet
 }
+
+function _time(ptr) {
+  var ret = (Date.now() / 1000) | 0;
+  if (ptr) {
+    HEAP32[ptr >> 2] = ret;
+  }
+  return ret;
+}
 var FSNode = /** @constructor */ function (parent, name, mode, rdev) {
   if (!parent) {
     parent = this; // root node sets parent to itself
@@ -6091,11 +6222,14 @@ function intArrayToString(array) {
 
 var asmGlobalArg = {};
 var asmLibraryArg = {
+  __cxa_allocate_exception: ___cxa_allocate_exception,
   __cxa_atexit: ___cxa_atexit,
+  __cxa_throw: ___cxa_throw,
   __handle_stack_overflow: ___handle_stack_overflow,
   __map_file: ___map_file,
   __sys_munmap: ___sys_munmap,
   abort: _abort,
+  difftime: _difftime,
   emscripten_get_sbrk_ptr: _emscripten_get_sbrk_ptr,
   emscripten_memcpy_big: _emscripten_memcpy_big,
   emscripten_resize_heap: _emscripten_resize_heap,
@@ -6109,6 +6243,7 @@ var asmLibraryArg = {
   setTempRet0: _setTempRet0,
   strftime_l: _strftime_l,
   table: wasmTable,
+  time: _time,
 };
 var asm = createWasm();
 Module["asm"] = asm;
@@ -6162,6 +6297,19 @@ var _fflush = (Module["_fflush"] = function () {
     "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)"
   );
   return Module["asm"]["fflush"].apply(null, arguments);
+});
+
+/** @type {function(...*):?} */
+var _setThrew = (Module["_setThrew"] = function () {
+  assert(
+    runtimeInitialized,
+    "you need to wait for the runtime to be ready (e.g. wait for main() to be called)"
+  );
+  assert(
+    !runtimeExited,
+    "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)"
+  );
+  return Module["asm"]["setThrew"].apply(null, arguments);
 });
 
 /** @type {function(...*):?} */
@@ -6849,12 +6997,6 @@ if (!Object.getOwnPropertyDescriptor(Module, "stringToNewUTF8"))
   Module["stringToNewUTF8"] = function () {
     abort(
       "'stringToNewUTF8' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)"
-    );
-  };
-if (!Object.getOwnPropertyDescriptor(Module, "abortOnCannotGrowMemory"))
-  Module["abortOnCannotGrowMemory"] = function () {
-    abort(
-      "'abortOnCannotGrowMemory' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)"
     );
   };
 if (!Object.getOwnPropertyDescriptor(Module, "emscripten_realloc_buffer"))

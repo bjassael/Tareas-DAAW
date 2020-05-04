@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <limits>
+#include <ctime>
 
 std::string ArrayToString(std::vector<int> set)
 {
@@ -118,14 +119,14 @@ std::vector<int> FindListFromStartingNumber(
     std::map<std::string, MaybeGeneratedTree> &setsGenerated)
 {
   std::vector<int> listOfNumbers;
-  std::cout << "numberToStart: " << numberToStart << "\n";
+  // std::cout << "numberToStart: " << numberToStart << "\n";
   while (
       listOfNumbers.size() < MAX_LEN &&
       numberToStart <= MAX_NUMBER_FROM_SET)
   {
     std::vector<int> newCombination(listOfNumbers.begin(), listOfNumbers.end());
     newCombination.push_back(numberToStart);
-    std::cout << "newCombination: " << ArrayToString(newCombination) << "\n";
+    // std::cout << "newCombination: " << ArrayToString(newCombination) << "\n";
     if ((setsGenerated.count(ArrayToString(newCombination)) == 0 || listOfNumbers.size() == 0) &&
         numberToStart != 2)
     {
@@ -136,7 +137,7 @@ std::vector<int> FindListFromStartingNumber(
     }
     numberToStart++;
   }
-  std::cout << "listOfNumbers.size(): " << listOfNumbers.size() << "\n";
+  // std::cout << "listOfNumbers.size(): " << listOfNumbers.size() << "\n";
   return listOfNumbers;
 }
 
@@ -148,9 +149,9 @@ void RecursiveFunction(
     std::vector<int> &finalArray)
 {
   std::vector<int> response = FindListFromStartingNumber(numberToPush, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated);
-  std::cout << "response: " << ArrayToString(response) << "\n";
-  std::cout << "MAX_NUMBER_FROM_SET: " << MAX_NUMBER_FROM_SET << "\n";
-  std::cout << "numberToPush: " << numberToPush << "\n";
+  // std::cout << "response: " << ArrayToString(response) << "\n";
+  // std::cout << "MAX_NUMBER_FROM_SET: " << MAX_NUMBER_FROM_SET << "\n";
+  // std::cout << "numberToPush: " << numberToPush << "\n";
   if (response.size() < MAX_LEN)
   {
     if (numberToPush + MAX_LEN > MAX_NUMBER_FROM_SET)
@@ -164,14 +165,35 @@ void RecursiveFunction(
   return RecursiveFunction(numberToPush, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated, finalArray);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+  time_t start, finish;
+
   std::map<std::string, std::string> m;
   std::map<std::string, MaybeGeneratedTree> setsGenerated;
 
   std::vector<int> finalArray;
-  int MAX_LEN = 6;
+  // int MAX_LEN = 6;
   int MAX_NUMBER_FROM_SET = std::numeric_limits<int>::max();
-  RecursiveFunction(1, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated, finalArray);
-  std::cout << "finalArray: " << ArrayToString(finalArray);
+
+  if (argc > 1)
+  {
+    int MAX_LEN = std::atoi(argv[1]);
+    if (MAX_LEN >= 3 && MAX_LEN <= 47)
+    {
+      std::cout << "n = " << MAX_LEN << "\n";
+      time(&start);
+      RecursiveFunction(1, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated, finalArray);
+      time(&finish);
+      std::cout << difftime(finish, start) << " segundos"
+                << "\n";
+      std::cout << "finalArray: " << ArrayToString(finalArray) << "\n";
+    }
+    else
+    {
+      std::cout << "número inválido, 3 <= n <= 47"
+                << "\n";
+    }
+  }
+  return 0;
 }
