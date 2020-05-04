@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include <limits>
-#include <ctime>
+#include <chrono>
 
 std::string ArrayToString(std::vector<int> set)
 {
@@ -148,14 +148,35 @@ void RecursiveFunction(
   return RecursiveFunction(numberToPush, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated, finalArray);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   std::map<std::string, std::string> m;
   std::map<std::string, MaybeGeneratedTree> setsGenerated;
 
   std::vector<int> finalArray;
-  int MAX_LEN = 6;
+  // int MAX_LEN = 6;
   int MAX_NUMBER_FROM_SET = std::numeric_limits<int>::max();
-  RecursiveFunction(1, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated, finalArray);
-  std::cout << "finalArray: " << ArrayToString(finalArray);
+
+  if (argc > 1)
+  {
+    int MAX_LEN = std::atoi(argv[1]);
+    if (MAX_LEN >= 3 && MAX_LEN <= 47)
+    {
+      std::cout << "n = " << MAX_LEN << "\n";
+      clock_t time = clock();
+      RecursiveFunction(1, MAX_LEN, MAX_NUMBER_FROM_SET, setsGenerated, finalArray);
+      time = clock() - time;
+      double duration = double(time) / CLOCKS_PER_SEC;
+
+      std::cout << duration << " segundos"
+                << "\n";
+      std::cout << "finalArray: " << ArrayToString(finalArray) << "\n";
+    }
+    else
+    {
+      std::cout << "número inválido, 3 <= n <= 47"
+                << "\n";
+    }
+  }
+  return 0;
 }
