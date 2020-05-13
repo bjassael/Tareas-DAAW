@@ -3,11 +3,11 @@ function generateSetTree(_set) {
   let start = 0;
   for (let number of _set) {
     for (let j = start; j < _set.length; j++) {
-      if (listMultipliedOrAdded[number * _set[j]]) {
+      if (listMultipliedOrAdded.includes(number * _set[j])) {
         return false;
       }
       listMultipliedOrAdded.push(number * _set[j]);
-      if (listMultipliedOrAdded[number + _set[j]]) {
+      if (listMultipliedOrAdded.includes(number + _set[j])) {
         return false;
       }
       listMultipliedOrAdded.push(number + _set[j]);
@@ -18,26 +18,24 @@ function generateSetTree(_set) {
 }
 
 function isNumberValidOnSets(numberToAdd, setToAdd) {
-  if (setToAdd.length === 1) {
+  if (setToAdd.length === 0) {
     return true;
   }
   if (setsGenerated[`[${setToAdd.join(", ")}]`] === undefined) {
     setsGenerated[`[${setToAdd.join(", ")}]`] = generateSetTree(setToAdd);
   }
   const newSet = [...setToAdd, numberToAdd];
+  setsGenerated[`[${newSet.join(", ")}]`] = false;
+  if (!setsGenerated[`[${setToAdd.join(", ")}]`]) {
+    return false;
+  }
   const newList = [...setsGenerated[`[${setToAdd.join(", ")}]`]];
-  for (let number of newSet) {
-    if (
-      setsGenerated[`[${setToAdd.join(", ")}]`].includes(number + numberToAdd)
-    ) {
-      setsGenerated[`[${newSet.join(", ")}]`] = false;
+  for (const number of newSet) {
+    if (newList.includes(number + numberToAdd)) {
       return false;
     }
     newList.push(number + numberToAdd);
-    if (
-      setsGenerated[`[${setToAdd.join(", ")}]`].includes(number * numberToAdd)
-    ) {
-      setsGenerated[`[${newSet.join(", ")}]`] = false;
+    if (newList.includes(number * numberToAdd)) {
       return false;
     }
     newList.push(number * numberToAdd);
@@ -90,7 +88,6 @@ const calculateSet = () => {
   MAX_NUMBER_FROM_SET = Infinity;
   setsGenerated = {};
   finalArray = [];
-  console.log(MAX_LEN);
 
   try {
     if (MAX_LEN > 47 || MAX_LEN <= 2) {
