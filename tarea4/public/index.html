@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Dream Journal</title>
+    <meta name="dream-report" content="your-first-pwa-v3" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="indigo" />
+    <meta name="apple-mobile-web-app-title" content="Dreams Report PWA" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-128x128.png" />
+    <meta name="description" content="A dream reports app" />
+    <meta name="theme-color" content="#310155" />
+
+    <script src="./main.js" defer></script>
+  </head>
+
+  <body>
+    <header>
+      <img src="images/icons/icon-128x128.png" alt="logo" />
+      <h1>Dream Reports</h1>
+    </header>
+
+  <main>
+    
+    <section class="dreams">
+
+        <div id="status-label" style="display: none;">
+          you are <span style="color: purple;"> Offline </span>
+        </div>
+
+        <div id="button-container">
+          <span id="last-updated">
+            ...
+          </span>
+
+          <button class="add-button">Install App</button>
+
+          <button id="refresh-data">
+            Update!
+          </button>
+        </div>
+
+        <ul id="dreams-list">
+
+          <li>
+            <em>loading dreams&hellip;</em>
+          </li>
+
+        </ul>
+
+        <li class="dream-item" id="dream-item-clone-default" style="display:none;">
+          <div class="dream-header">
+            <h2 class="author">Author</h2>
+            <span class="date"> today </span>
+          </div>
+          <p class="text">Texto del sueño</p>
+        </li>
+        
+      </section>
+
+      <div>
+        <!-- div to display messages received by this app. -->
+        <div id="token" style="visibility: hidden;"></div>
+        <div id="message"></div>
+        <div id="error"></div>
+      </div>
+    </main>
+
+    <!--   Firebase   -->
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-messaging.js"></script>
+    <script src="./install.js"></script>
+    <script src="./messaging.js"></script>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./service-worker.js").then(reg => {
+            console.log("Service worker registered.", reg);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
