@@ -8,7 +8,7 @@
         </mu-form-item>
 
         <mu-form-item>
-          <mu-button color="primary" @click="fetchBook">submit</mu-button>
+          <mu-button color="primary" @click="fetchBooks">submit</mu-button>
         </mu-form-item>
 
       </mu-form>
@@ -30,7 +30,6 @@
 
 <script>
 import axios from 'axios'
-const DEFAULT_PAGE_SIZE = 10
 
 export default {
   name: 'SearchForm',
@@ -49,41 +48,15 @@ export default {
     }
   },
   methods: {
-    fetchBook () {
-      this.$refs
-        .searchForm
-        .validate()
-        .then((result) => {
-          console.log('form valid: ', result)
-          this.fetchBooks()
-        })
-    },
-    getNewPage (actualPage, pageDirection) {
-      if (pageDirection === 0) {
-        return 1
-      }
-      return Math.max(actualPage + pageDirection, 1)
-    },
-    paginateRequest (newPage, searchParams) {
-      Object.assign(searchParams, { page: newPage, page_size: DEFAULT_PAGE_SIZE })
-      return searchParams
-    },
     async fetchBooks (payload) {
       const searchParams = this.form
-      console.log(searchParams)
-      // const requestedPage = this.getNewPage(this.page, 0)
-      // const paginatedSearchParams = this.paginateRequest(requestedPage, searchParams)
-      // const response = await searchExams(paginatedSearchParams)
       axios({
         baseURL: 'http://127.0.0.1:8000/',
         url: '/books/',
         params: searchParams
       }).then((response) => {
         if (response.status === 200) {
-          // const { previous, next, results, count } = response.data
-          // console.log(response.data)
           let results = response.data
-          // console.log(results)
           if (results) {
             results = results.map(book => {
               return {
