@@ -1,4 +1,5 @@
 from rest_framework import generics, mixins
+from rest_framework.response import Response
 from home.models import Author, Book, Genre
 from home.serializers import AuthorSerializer, BookSerializer, GenreSerializer
 
@@ -9,18 +10,18 @@ class AuthorListView(generics.ListAPIView):
     queryset = Author.objects.all()
 
 
-class BookListView(mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   generics.GenericAPIView):
+class BookListView(generics.GenericAPIView):
 
     serializer_class = BookSerializer
     queryset = Book.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def get(self, request):
+        queryset = Book.objects.all()
+        name = request.GET.get('name', None)
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        serializer = BookSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class GenreListView(generics.ListAPIView):
