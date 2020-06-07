@@ -1,7 +1,13 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Search</router-link>
+      <ul>
+        <li><router-link class="linkNav" to="/">Bookies!</router-link></li>
+        <li style="float:right" v-if="$store.getters.isLoggedIn"><router-link to="#"><a class="linkNav" @click="$store.dispatch('logout')">Logout</a></router-link></li>
+        <li style="float:right" v-if="$store.getters.isLoggedIn"><router-link class="linkNav" to="/my-books">My Books</router-link></li>
+        <li style="float:right" v-if="!$store.getters.isLoggedIn"><router-link class="linkNav" to="/login">Sign In</router-link></li>
+        <li style="float:right" v-if="!$store.getters.isLoggedIn"><router-link class="linkNav" to="/register">Sign Up</router-link></li>
+      </ul>
     </div>
     <router-view/>
   </div>
@@ -13,18 +19,44 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
 
 #nav {
   padding: 0;
-  a {
+  .linkNav {
     font-weight: bold;
-    color: #2c3e50;
-
+    color: white;
     &.router-link-exact-active {
-      color: #42b983;
+      background-color: rgb(2, 125, 173);
     }
   }
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: rgb(25, 101, 131);
+}
+
+li {
+  float: left;
+}
+
+li .linkNav{
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li .linkNav:hover:not(.active) {
+  background-color: rgb(5, 65, 88);
+}
+
+.active {
+  background-color: rgb(2, 125, 173);
 }
 </style>
