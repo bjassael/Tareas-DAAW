@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { getOrCreateUserToken, deleteUserToken } from '@/api'
+import moduleBooks from './modules/books'
 
 Vue.use(Vuex)
 
@@ -14,7 +15,6 @@ const store = new Vuex.Store({
       state.token = token
       localStorage.setItem('token', token)
     },
-
     LOGOUT: state => {
       localStorage.removeItem('user')
       localStorage.removeItem('token')
@@ -45,6 +45,9 @@ const store = new Vuex.Store({
         };
       }
     }
+  },
+  modules: {
+    books: moduleBooks
   },
   getters: {
     getToken: state => {

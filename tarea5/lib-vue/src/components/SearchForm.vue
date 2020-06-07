@@ -1,14 +1,13 @@
 <template>
   <div class="hello">
-
     <mu-container>
-      <mu-form ref="searchForm" :model="form" class="mu-demo-form" label-width="100">
-        <mu-form-item prop="name" label="Name">
-          <mu-text-field v-model="form.name"></mu-text-field>
+      <mu-form ref="searchForm" :model="form" class="mu-demo-form search-form" label-width="100">
+        <mu-form-item prop="name" label="Book name">
+          <mu-text-field v-model="form.name" placeholder="Search.."></mu-text-field>
         </mu-form-item>
 
         <mu-form-item>
-          <mu-button color="primary" @click="fetchBooks">submit</mu-button>
+          <mu-button color="primary" @click="fetchBooksStore">Search</mu-button>
         </mu-form-item>
 
       </mu-form>
@@ -29,13 +28,11 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'SearchForm',
   data () {
     return {
-      books: [],
+      books: this.$store.state.books.bookList,
       columns: [
         { title: 'Name', name: 'name' },
         { title: 'Authors', name: 'authors' },
@@ -48,32 +45,19 @@ export default {
     }
   },
   methods: {
-    async fetchBooks (payload) {
+    async fetchBooksStore (page) {
       const searchParams = this.form
-      axios({
-        baseURL: 'http://127.0.0.1:8000/',
-        url: '/books/',
-        params: searchParams
-      }).then((response) => {
-        if (response.status === 200) {
-          let results = response.data
-          if (results) {
-            results = results.map(book => {
-              return {
-                name: book.name,
-                authors: book.authors.map(author => `${author.first_name} ${author.last_name}`).join(),
-                genres: book.genres.map(genre => `${genre.genre}`).join()
-              }
-            })
-          }
-          this.books = results
-        } else {
-          console.log('err', response)
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      })
+      await this.$store.dispatch('getAllBooks', { searchParams })
+        .then(() => {
+          this.books = this.$store.state.books.bookList
+        })
     }
+  },
+  mounted: async function () {
+    await this.$store.dispatch('getAllBooks', { searchParams: '' })
+      .then(() => {
+        this.books = this.$store.state.books.bookList
+      })
   }
 }
 

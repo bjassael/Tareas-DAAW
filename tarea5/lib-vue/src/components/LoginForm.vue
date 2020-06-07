@@ -33,7 +33,7 @@ export default {
           // Store
           this.$store.dispatch('Login', { username, password }).then(() => {
             this.loading = false
-            this.$router.push({ path: '/' })
+            this.$router.push('my-books')
           }).catch((error) => {
             // Issues Logging in, show errors (an error is not a 200 http status)
             if (error) {
