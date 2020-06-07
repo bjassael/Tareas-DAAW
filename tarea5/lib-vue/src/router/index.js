@@ -4,7 +4,7 @@ import Home from '../views/Home.vue'
 import MyBooks from '../views/MyBooks.vue'
 import Register from '../views/Register.vue'
 import Login from '../views/Login.vue'
-// import store from '../store'
+import NewBook from '../views/NewBook.vue'
 
 Vue.use(VueRouter)
 
@@ -44,6 +44,14 @@ const routes = [
       requiresAuth: 'false'
     },
     component: Login
+  },
+  {
+    path: '/my-books/new',
+    name: 'New Book',
+    meta: {
+      requiresAuth: 'true'
+    },
+    component: NewBook
   }
 ]
 

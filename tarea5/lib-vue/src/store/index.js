@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import moduleBooks from './modules/books'
 
 Vue.use(Vuex)
 
@@ -25,7 +26,9 @@ const store = new Vuex.Store({
       commit('MUT_LOGIN')
     }
   },
-  modules: {},
+  modules: {
+    books: moduleBooks
+  },
   getters: {
     isLoggedIn (state) {
       // check if it is logged in
