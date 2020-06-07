@@ -18,7 +18,7 @@
   </div>
 
   <div class="container signIn">
-    <p>Already have an account? <router-link to="login">Sign in</router-link>.</p>
+    <p>Already have an account? <router-link to="Login">Sign in</router-link>.</p>
   </div>
 </form>
 </template>
@@ -54,7 +54,7 @@ hr {
 
 /* Set a style for the submit/register button */
 .registerBtn {
-  background-color: #4CAF50;
+  background-color: rgb(2, 125, 173);
   color: white;
   padding: 16px 20px;
   margin: 8px 0;

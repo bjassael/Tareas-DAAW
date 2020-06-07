@@ -3,20 +3,40 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
-    user: 1
+    user: localStorage.getItem('user')
   },
   mutations: {
+    MUT_LOGOUT: state => {
+      localStorage.removeItem('user')
+      state.user = null
+    },
+    MUT_LOGIN: state => {
+      localStorage.setItem('user', true)
+      state.user = true
+    }
   },
   actions: {
+    logout ({ commit }) {
+      commit('MUT_LOGOUT')
+    },
+    login ({ commit }) {
+      commit('MUT_LOGIN')
+    }
   },
-  modules: {
-  },
+  modules: {},
   getters: {
-    isLoggedIn () {
+    isLoggedIn (state) {
       // check if it is logged in
-      return true
+      return state.user
     }
   }
 })
+
+// store.subscribe((mutation, state) => {
+//   // Store the state object as a JSON string
+//   localStorage.setItem('store', JSON.stringify(state))
+// })
+
+export default store

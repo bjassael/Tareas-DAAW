@@ -4,18 +4,18 @@
     <hr>
 
     <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+    <input type="text" placeholder="Enter Email" name="email" id="email" >
 
     <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+    <input type="password" placeholder="Enter Password" name="psw" id="psw" >
 
     <hr>
 
-    <button type="submit" class="registerBtn">Sign in</button>
+    <button type="submit" class="registerBtn" @click="$store.dispatch('login')">Sign in</button>
   </div>
 
   <div class="container signIn">
-    <p>You don't have an account? <router-link to="register">Sign up</router-link>.</p>
+    <p>You don't have an account? <router-link to="Register">Sign up</router-link>.</p>
   </div>
 </form>
 </template>
@@ -51,7 +51,7 @@ hr {
 
 /* Set a style for the submit/register button */
 .registerBtn {
-  background-color: #4CAF50;
+  background-color: rgb(2, 125, 173);
   color: white;
   padding: 16px 20px;
   margin: 8px 0;
