@@ -11,15 +11,15 @@
       <input type="text" placeholder="Enter Book Name" @input="setName" id="name" :value="name" required />
 
       <label for="authors">
-        <b>Authors</b>
+        <b>Author</b>
       </label>
       <input type="text" placeholder="Author First Name" @input="setAuthorsFirstname" id="authorsFirstname" :value="authorsFirstname" required />
       <input type="text" placeholder="Author Last Name" @input="setAuthorsLastname" id="authorsLastname" :value="authorsLastname" required />
 
       <label for="genres">
-        <b>Genres</b>
+        <b>Genre</b>
       </label>
-      <input type="text" placeholder="Enter Book Genres" @input="setGenres" id="genres" :value="genres" required />
+      <input type="text" placeholder="Enter Book Genre" @input="setGenres" id="genres" :value="genres" required />
       <hr />
 
       <!-- <input type="hidden" name="userToken" id="userToken" :value="userToken" required /> -->
