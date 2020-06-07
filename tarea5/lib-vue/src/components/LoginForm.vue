@@ -1,17 +1,33 @@
+<script>
+import { mapState } from 'vuex'
+export default {
+  name: 'LoginForm',
+  computed: mapState(['email', 'password', 'errors']),
+  methods: {
+    updateEmail (e) {
+      this.$store.commit('MUT_EMAIL', { email: e.target.value })
+    },
+    updatePassword (e) {
+      this.$store.commit('MUT_PASSWORD', { password: e.target.value })
+    }
+  }
+}
+</script>
+
 <template>
-<form action="">
+<form>
   <div class="container">
     <hr>
 
     <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" id="email" >
+    <input v-bind:class="{ hasError: errors.email }" type="text" placeholder="Enter Email" id="email" @input="updateEmail" :value="email">
 
     <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" id="psw" >
+    <input type="password" placeholder="Enter Password"  @input="updatePassword" :value="password" id="psw" >
 
     <hr>
 
-    <button type="submit" class="registerBtn" @click="$store.dispatch('login')">Sign in</button>
+    <button type="submit" class="loginBtn" @click="$store.dispatch('login')">Sign in</button>
   </div>
 
   <div class="container signIn">
@@ -26,6 +42,13 @@
 /* Add padding to containers */
 .container {
   padding: 16px;
+}
+
+.hasError{
+  background-color: rgb(201, 92, 92)!important;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
 }
 
 /* Full-width input fields */
@@ -50,7 +73,7 @@ hr {
 }
 
 /* Set a style for the submit/register button */
-.registerBtn {
+.loginBtn {
   background-color: rgb(2, 125, 173);
   color: white;
   padding: 16px 20px;
@@ -61,7 +84,7 @@ hr {
   opacity: 0.9;
 }
 
-.registerBtn:hover {
+.loginBtn:hover {
   opacity:1;
 }
 
@@ -76,8 +99,3 @@ a {
   text-align: center;
 }
 </style>
-
-<script>
-export default { name: 'LoginForm' }
-
-</script>
