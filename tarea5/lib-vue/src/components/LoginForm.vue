@@ -1,39 +1,79 @@
 <script>
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   name: 'LoginForm',
-  computed: mapState(['email', 'password', 'errors']),
+  data () {
+    return {
+      loading: false,
+      loginForm: {
+        username: '',
+        password: ''
+      },
+      openAlert: false,
+      usernameRules: [
+        { validate: (val) => !!val, message: 'Username must be filled in' }
+      ],
+      passwordRules: [
+        { validate: (val) => !!val, message: 'Password must be filled in' },
+        { validate: (val) => val.length >= 3 && val.length <= 10, message: 'Password length must be greater than 3 and less than 10' }
+      ]
+    }
+  },
+  // computed: mapState(['email', 'password', 'errors']),
   methods: {
-    updateEmail (e) {
-      this.$store.commit('MUT_EMAIL', { email: e.target.value })
+    closeAlertDialog () {
+      this.openAlert = false
     },
-    updatePassword (e) {
-      this.$store.commit('MUT_PASSWORD', { password: e.target.value })
+    handleLogin () {
+      this.$refs.loginForm.validate().then((valid) => {
+        if (valid) {
+          this.loading = true
+          const { username, password } = this.loginForm
+
+          // Store
+          this.$store.dispatch('Login', { username, password }).then(() => {
+            this.loading = false
+            this.$router.push({ path: '/' })
+          }).catch((error) => {
+            // Issues Logging in, show errors (an error is not a 200 http status)
+            if (error) {
+              this.loading = false
+              this.openAlert = true
+            }
+          })
+        }
+      })
     }
   }
 }
 </script>
 
 <template>
-<form>
   <div class="container">
-    <hr>
 
-    <label for="email"><b>Email</b></label>
-    <input v-bind:class="{ hasError: errors.email }" type="text" placeholder="Enter Email" id="email" @input="updateEmail" :value="email">
+    <mu-form ref="loginForm" :model="loginForm" class="mu-demo-form">
 
-    <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password"  @input="updatePassword" :value="password" id="psw" >
+      <mu-form-item label="username" prop="username" :rules="usernameRules">
+        <mu-text-field v-model="loginForm.username" prop="username"></mu-text-field>
+      </mu-form-item>
 
-    <hr>
+      <mu-form-item label="password" prop="password" :rules="passwordRules">
+        <mu-text-field type="password" v-model="loginForm.password" prop="password" id="psw"></mu-text-field>
+      </mu-form-item>
 
-    <button type="submit" class="loginBtn" @click="$store.dispatch('login')">Sign in</button>
+      <mu-form-item>
+        <button type="submit" class="loginBtn" @click="handleLogin">Sign in</button>
+      </mu-form-item>
+
+    </mu-form>
+
+    <mu-dialog title="Check Credentials" width="600" max-width="80%" :esc-press-close="false" :overlay-close="false" :open.sync="openAlert">
+      Username or password not valid.
+      <mu-button slot="actions" flat color="primary" @click="closeAlertDialog">close</mu-button>
+    </mu-dialog>
+
   </div>
 
-  <div class="container signIn">
-    <p>You don't have an account? <router-link to="Register">Sign up</router-link>.</p>
-  </div>
-</form>
 </template>
 
 <style scoped>

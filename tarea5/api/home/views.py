@@ -8,7 +8,6 @@ from home.models import Author, Book, Genre
 from home.serializers import AuthorSerializer, BookSerializer, GenreSerializer, UserSerializer
 
 
-
 class AuthorListView(generics.ListAPIView):
 
     serializer_class = AuthorSerializer

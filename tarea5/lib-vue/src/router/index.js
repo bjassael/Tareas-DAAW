@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import MyBooks from '../views/MyBooks.vue'
-import Register from '../views/Register.vue'
 import Login from '../views/Login.vue'
 // import store from '../store'
 
@@ -28,14 +27,6 @@ const routes = [
     //     next() // go to wherever I'm going
     //   }
     // }
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    meta: {
-      requiresAuth: 'false'
-    },
-    component: Register
   },
   {
     path: '/login',
