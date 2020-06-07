@@ -1,20 +1,38 @@
+<script>
+import { mapState } from 'vuex'
+export default {
+  name: 'RegisterForm',
+  computed: mapState(['email', 'password', 'passwordConfirmation', 'errors']),
+  methods: {
+    updateEmail (e) {
+      this.$store.commit('MUT_EMAIL', { email: e.target.value })
+    },
+    updatePassword (e) {
+      this.$store.commit('MUT_PASSWORD', { password: e.target.value })
+    },
+    updatePasswordConfirmation (e) {
+      this.$store.commit('MUT_PASSWORD_CONFIRMATION', { passwordConfirmation: e.target.value })
+    }
+  }
+}
+</script>
 <template>
-<form action="">
+<form>
   <div class="container">
     <p>Please fill in this form to create an account.</p>
     <hr>
 
     <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+    <input v-bind:class="{ hasError: errors.email }" type="text" placeholder="Enter Email" id="email" @input="updateEmail" :value="email">
 
     <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+    <input type="password" placeholder="Enter Password"  @input="updatePassword" :value="password" id="psw" >
 
     <label for="psw-repeat"><b>Repeat Password</b></label>
-    <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
+    <input v-bind:class="{ hasError: errors.passwordConfirmation }" type="password" placeholder="Enter Password Confirmation" @input="updatePasswordConfirmation" :value="passwordConfirmation" id="psw_confirmation">
     <hr>
 
-    <button type="submit" class="registerBtn">Register</button>
+    <button type="submit" class="registerBtn" @click="$store.dispatch('register')">Register</button>
   </div>
 
   <div class="container signIn">
@@ -29,6 +47,13 @@
 /* Add padding to containers */
 .container {
   padding: 16px;
+}
+
+.hasError{
+  background-color: rgb(201, 92, 92)!important;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
 }
 
 /* Full-width input fields */
@@ -79,8 +104,3 @@ a {
   text-align: center;
 }
 </style>
-
-<script>
-export default { name: 'RegisterForm' }
-
-</script>
