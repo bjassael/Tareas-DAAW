@@ -1,5 +1,5 @@
 <template>
-<form action="action_page.php">
+<form action="">
   <div class="container">
     <p>Please fill in this form to create an account.</p>
     <hr>
