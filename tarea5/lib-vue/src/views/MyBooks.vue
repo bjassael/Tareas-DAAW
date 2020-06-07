@@ -1,6 +1,13 @@
 <template>
   <div class="home">
-    <h1>My Books!</h1>
+    <h1>
+      My Books!
+      <router-link to="/my-books/new" class="new-button">
+        <mu-button>
+          + New Book
+        </mu-button>
+      </router-link>
+    </h1>
     <SearchForm />
   </div>
 </template>
@@ -16,3 +23,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .new-button {
+    margin: 0;
+  }
+</style>

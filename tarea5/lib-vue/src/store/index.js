@@ -32,7 +32,7 @@ const store = new Vuex.Store({
       state.user = true
       state.password = ''
       state.passwordConfirmation = ''
-      router.push('Home')
+      router.push('my-books')
     },
     MUT_REGISTER: state => {
       if (state.password !== state.passwordConfirmation) {
