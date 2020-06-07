@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-from rest_framework import generics, mixins, views, viewsets
+from rest_framework import generics, mixins, views, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-=======
-from rest_framework import generics, mixins, status
->>>>>>> new-book
 from rest_framework.response import Response
 from home.models import Author, Book, Genre
 from home.serializers import AuthorSerializer, BookSerializer, GenreSerializer, UserSerializer

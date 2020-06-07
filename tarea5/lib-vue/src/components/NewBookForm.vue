@@ -30,25 +30,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 
 export default {
-  name: 'NewBook',
-  computed: mapState(['name', 'authors', 'genres']),
-  methods: {
-    setName (e) {
-      this.$store.commit('setBookName', { newName: e.target.value })
-    },
-    setAuthorsFirstname (e) {
-      this.$store.commit('setBookAuthorsFirstname', { newAuthorsFirstname: e.target.value })
-    },
-    setAuthorsLastname (e) {
-      this.$store.commit('setBookAuthorsLastname', { newAuthorsLastname: e.target.value })
-    },
-    setGenres (e) {
-      this.$store.commit('setBookGenres', { newGenres: e.target.value })
-    }
-  }
+  name: 'NewBook'
 }
 </script>
 

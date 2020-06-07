@@ -17,7 +17,14 @@ export function deleteUserToken () {
 
 export function getCurrentUserRequest () {
   return request({
-    url: '/users/current/',
+    url: '/current/',
     method: 'get'
+  })
+}
+
+export function newBook () {
+  return request({
+    url: '/books/',
+    method: 'post'
   })
 }
