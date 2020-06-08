@@ -7,8 +7,8 @@
     <div class="banner">
       <div class="tableSlogan">
       <div class="slogan">
-        <div>Take advantage of your free time</div>
-        <div>and organize the books in your house!</div>
+        <div>Have fun and organize</div>
+        <div>the books at home!</div>
       </div>
       </div>
       <div class="bannerImageContainer">

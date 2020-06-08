@@ -8,18 +8,15 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    user: localStorage.getItem('user'),
     token: localStorage.getItem('token')
   },
   mutations: {
-    SET_TOKEN: (state, token) => {
+    setToken: (state, token) => {
       state.token = token
       localStorage.setItem('token', token)
     },
-    LOGOUT: state => {
-      localStorage.removeItem('user')
+    logout: state => {
       localStorage.removeItem('token')
-      state.user = null
       state.token = null
     }
   },
@@ -28,7 +25,7 @@ const store = new Vuex.Store({
       const response = await getOrCreateUserToken(userData)
       try {
         const { token } = response.data
-        commit('SET_TOKEN', token)
+        commit('setToken', token)
       } catch (e) {
         console.log('Login Error:', e)
         throw e
@@ -37,7 +34,7 @@ const store = new Vuex.Store({
     async logout ({ commit }) {
       return await deleteUserToken()
         .then(() => {
-          commit('LOGOUT')
+          commit('logout')
           router.push('/')
         })
         .catch((error) => {

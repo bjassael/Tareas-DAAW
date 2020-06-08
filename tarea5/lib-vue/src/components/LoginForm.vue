@@ -35,7 +35,7 @@ export default {
             this.loading = false
             this.$router.push('my-books')
           }).catch((error) => {
-            // Issues Logging in, show errors (an error is not a 200 http status)
+            // Issues Logging in, show errors (an error is an http status other than 200)
             if (error) {
               this.loading = false
               this.openAlert = true
