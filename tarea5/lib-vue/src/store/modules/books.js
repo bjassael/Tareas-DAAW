@@ -1,7 +1,5 @@
-import axios from 'axios'
 import router from '../../router'
-
-const apiUrl = 'http://127.0.0.1:8000/'
+import { getBooksByUser, newBook } from '@/api'
 
 const moduleBooks = {
   state: () => ({
@@ -55,22 +53,16 @@ const moduleBooks = {
     }
   },
   actions: {
-    async getAllBooks (context, searchParams) {
+    async getAllBooksByUser (context, searchParams) {
       context.commit('getBooksRequest')
-      return axios({
-        method: 'get',
-        baseURL: apiUrl,
-        url: '/books/',
-        params: {
-          name: searchParams.searchParams.name
-        }
-      })
+      return await getBooksByUser(searchParams)
         .then(({ data }) => {
           const books = data.map(book => {
+            console.log(book)
             return {
               name: book.name,
               authors: book.authors
-                .map(author => `${author.first_name} ${author.last_name}`)
+                .map(author => `${author.firstName} ${author.lastName}`)
                 .join(),
               genres: book.genres.map(genre => `${genre.genre}`).join()
             }
@@ -83,27 +75,22 @@ const moduleBooks = {
     },
     async postBook (context) {
       context.commit('postNewBook', context.rootState.user)
-      return axios({
-        method: 'post',
-        baseURL: apiUrl,
-        url: '/books/',
-        data: {
-          name: context.state.newName,
-          authorsFirstname: context.state.newAuthorsFirstname,
-          authorsLastname: context.state.newAuthorsLastname,
-          genres: context.state.newGenres,
-          userToken: context.rootState.user
-        }
-      })
-        .then(async ({ response }) => {
-          console.log(response)
-          context.commit('resetBookFields')
-          await context.dispatch('getAllBooks', { searchParams: '' })
-          router.push('/my-books')
-        })
-        .catch(e => {
-          console.log(e)
-        })
+      const bookData = {
+        name: context.state.newName,
+        authorsFirstname: context.state.newAuthorsFirstname,
+        authorsLastname: context.state.newAuthorsLastname,
+        genres: context.state.newGenres
+      }
+      const response = await newBook(bookData)
+      try {
+        console.log(response)
+        context.commit('resetBookFields')
+        await context.dispatch('getAllBooksByUser', { searchParams: '' })
+        router.push('/my-books')
+      } catch (e) {
+        console.log('Request Error:', e)
+        // throw e
+      }
     }
   }
 }

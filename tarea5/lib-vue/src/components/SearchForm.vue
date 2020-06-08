@@ -47,14 +47,14 @@ export default {
   methods: {
     async fetchBooksStore (page) {
       const searchParams = this.form
-      await this.$store.dispatch('getAllBooks', { searchParams })
+      await this.$store.dispatch('getAllBooksByUser', { searchParams })
         .then(() => {
           this.books = this.$store.state.books.bookList
         })
     }
   },
   mounted: async function () {
-    await this.$store.dispatch('getAllBooks', { searchParams: '' })
+    await this.$store.dispatch('getAllBooksByUser', { searchParams: '' })
       .then(() => {
         this.books = this.$store.state.books.bookList
       })

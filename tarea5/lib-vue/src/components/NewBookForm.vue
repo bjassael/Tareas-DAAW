@@ -8,21 +8,19 @@
       <label for="name">
         <b>Name</b>
       </label>
-      <input type="text" placeholder="Enter Book Name" @input="setName" id="name" :value="name" required />
+      <input type="text" placeholder="Enter Book Name" @input="setName" id="name" :value="newName" required />
 
       <label for="authors">
         <b>Author</b>
       </label>
-      <input type="text" placeholder="Author First Name" @input="setAuthorsFirstname" id="authorsFirstname" :value="authorsFirstname" required />
-      <input type="text" placeholder="Author Last Name" @input="setAuthorsLastname" id="authorsLastname" :value="authorsLastname" required />
+      <input type="text" placeholder="Author First Name" @input="setAuthorsFirstname" id="authorsFirstname" :value="newAuthorsFirstname" required />
+      <input type="text" placeholder="Author Last Name" @input="setAuthorsLastname" id="authorsLastname" :value="newAuthorsLastname" required />
 
       <label for="genres">
         <b>Genre</b>
       </label>
-      <input type="text" placeholder="Enter Book Genre" @input="setGenres" id="genres" :value="genres" required />
+      <input type="text" placeholder="Enter Book Genre" @input="setGenres" id="genres" :value="newGenres" required />
       <hr />
-
-      <!-- <input type="hidden" name="userToken" id="userToken" :value="userToken" required /> -->
 
       <button type="submit" class="registerBtn" @click="$store.dispatch('postBook')">Add Book</button>
     </div>
@@ -30,9 +28,25 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
 export default {
-  name: 'NewBook'
+  name: 'NewBook',
+  computed: mapState(['newName', 'newAuthorsFirstname', 'newAuthorsLastname', 'newGenres']),
+  methods: {
+    setName (e) {
+      this.$store.commit('setBookName', { newName: e.target.value })
+    },
+    setAuthorsFirstname (e) {
+      this.$store.commit('setBookAuthorsFirstname', { newAuthorsFirstname: e.target.value })
+    },
+    setAuthorsLastname (e) {
+      this.$store.commit('setBookAuthorsLastname', { newAuthorsLastname: e.target.value })
+    },
+    setGenres (e) {
+      this.$store.commit('setBookGenres', { newGenres: e.target.value })
+    }
+  }
 }
 </script>
 

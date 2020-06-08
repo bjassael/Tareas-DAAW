@@ -22,9 +22,20 @@ export function getCurrentUserRequest () {
   })
 }
 
-export function newBook () {
+export function getBooksByUser (searchParams) {
   return request({
     url: '/books/',
-    method: 'post'
+    method: 'get',
+    params: {
+      name: searchParams.searchParams.name
+    }
+  })
+}
+
+export function newBook (bookData) {
+  return request({
+    url: '/books/',
+    method: 'post',
+    data: bookData
   })
 }
