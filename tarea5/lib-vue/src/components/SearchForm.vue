@@ -7,7 +7,7 @@
         </mu-form-item>
 
         <mu-form-item>
-          <mu-button color="primary" @click="fetchBooksStore">Search</mu-button>
+          <mu-button color="red" @click="fetchBooksStore">Search</mu-button>
         </mu-form-item>
 
       </mu-form>

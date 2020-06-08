@@ -27,7 +27,7 @@
     font-weight: bold;
     color: white;
     &.router-link-exact-active {
-      background-color: rgb(2, 125, 173);
+      background-color: #D22C21;
     }
   }
 }
@@ -37,7 +37,7 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: rgb(25, 101, 131);
+  background-color: rgb(9, 94, 122);
 }
 
 li {
@@ -57,6 +57,6 @@ li .linkNav:hover:not(.active) {
 }
 
 .active {
-  background-color: rgb(2, 125, 173);
+  background-color: #D22C21;
 }
 </style>
