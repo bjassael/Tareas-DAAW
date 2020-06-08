@@ -6,7 +6,7 @@
         <li style="float:right" v-if="$store.getters.isLoggedIn"><router-link to="#"><a class="linkNav" @click="$store.dispatch('logout')">Logout</a></router-link></li>
         <li style="float:right" v-if="$store.getters.isLoggedIn"><router-link class="linkNav" to="/my-books">My Books</router-link></li>
         <li style="float:right" v-if="!$store.getters.isLoggedIn"><router-link class="linkNav" to="/login">Sign In</router-link></li>
-        <li style="float:right" v-if="!$store.getters.isLoggedIn"><router-link class="linkNav" to="/register">Sign Up</router-link></li>
+        <!-- <li style="float:right" v-if="!$store.getters.isLoggedIn"><router-link class="linkNav" to="/register">Sign Up</router-link></li> -->
       </ul>
     </div>
     <router-view/>
