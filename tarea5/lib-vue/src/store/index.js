@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { getOrCreateUserToken, deleteUserToken } from '@/api'
 import moduleBooks from './modules/books'
+import router from '../router'
 
 Vue.use(Vuex)
 
@@ -34,16 +35,14 @@ const store = new Vuex.Store({
       }
     },
     async logout ({ commit }) {
-      const response = await deleteUserToken()
-      try {
-        if (response.status === 200) {
+      return await deleteUserToken()
+        .then(() => {
           commit('LOGOUT')
-        }
-      } catch (e) {
-        if (e.response.status === 401) {
-          commit('LOGOUT')
-        };
-      }
+          router.push('/')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   },
   modules: {
