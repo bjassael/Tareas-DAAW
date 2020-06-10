@@ -9,18 +9,14 @@
   let mouseDown = false;
   let currentPencilSize = 5;
   const allLines = [];
-  let lastLine = {
-    coords: [],
-    c: currentColor,
-    s: currentPencilSize
-  };
+  let lastLine = [];
   const mousePos = {
-    x: null,
-    y: null
+    x: 0,
+    y: 0
   };
   const prevMousePos = {
-    x: null,
-    y: null
+    x: 0,
+    y: 0
   };
 
   function trackMouse(event) {
@@ -29,26 +25,23 @@
       mouseDown = true;
     } else if (event.type === "mouseup") {
       mouseDown = false;
-      allLines.push(JSON.parse(JSON.stringify(lastLine)));
-      lastLine = {
-        coords: [],
-        c: currentColor,
-        s: currentPencilSize
-      };
+      allLines.push([...lastLine]);
+      lastLine = [];
     }
     if (mouseDown) {
       prevMousePos.x = mousePos.x;
       prevMousePos.y = mousePos.y;
       mousePos.x = (event.clientX - rect.left).toFixed(0);
       mousePos.y = (event.clientY - rect.top).toFixed(0);
-      let elementToAdd = JSON.stringify({
+      lastLine.push({
         x: mousePos.x,
         y: mousePos.y,
+        c: currentColor,
+        s: currentPencilSize,
+        prevX: prevMousePos.x,
+        prevY: prevMousePos.y,
         m: event.type === "mousemove"
       });
-      if (!lastLine.coords.includes(elementToAdd)) {
-        lastLine.coords.push(elementToAdd);
-      }
       drawImage(
         mousePos.x,
         mousePos.y,
@@ -77,9 +70,9 @@
 
   function resizePencil(event) {
     if (event.wheelDelta > 0) {
-      currentPencilSize = Math.max(currentPencilSize - 3, 2);
+      currentPencilSize = Math.max(currentPencilSize - 2, 2);
     } else {
-      currentPencilSize = Math.min(currentPencilSize + 3, 45);
+      currentPencilSize = Math.min(currentPencilSize + 2, 45);
     }
   }
 
@@ -110,21 +103,14 @@
       if (line.event === "reset") {
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       } else {
-        line.coords.forEach((point, i) => {
-          point = JSON.parse(point);
-          let prevX = null;
-          let prevY = null;
-          if (i > 0) {
-            prevX = line.coords[i - 1].x;
-            prevY = line.coords[i - 1].y;
-          }
+        line.forEach(point => {
           drawImage(
             point.x,
             point.y,
-            prevX,
+            point.prevX,
             point.prevY,
-            line.c,
-            line.s,
+            point.c,
+            point.s,
             point.m
           );
         });
