@@ -10,10 +10,12 @@
   let currentPencilSize = 5;
   const allLines = [];
   let lastLine = [];
+
   const mousePos = {
     x: 0,
     y: 0
   };
+
   const prevMousePos = {
     x: 0,
     y: 0
@@ -143,10 +145,8 @@
   }
   .pencilContainer {
     position: absolute;
-    width: 100px;
     height: 100px;
     top: 0%;
-    left: 0%;
   }
   .buttonContainer {
     position: absolute;
@@ -157,7 +157,9 @@
 </style>
 
 <div class="canvasContainer">
-  <div class="pencilContainer">
+  <div
+    class="pencilContainer"
+    style="left: calc({canvasWidth}px + {100 / 2}px)">
     <div
       class="pencil"
       style="height:{currentPencilSize * 2}px;width: {currentPencilSize * 2}px;background-color:{currentColor}" />
