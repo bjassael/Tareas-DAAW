@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Author, Book, Genre
 
 
@@ -22,3 +23,11 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['name', 'authors', 'genres']
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'password', 'first_name', 'last_name')
+        read_only_fields = ('username', 'password')
