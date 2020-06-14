@@ -38,9 +38,9 @@
     console.log("password", password);
     try {
       const response = await getOrCreateUserToken({ username, password });
-      const { token } = response.data;
-      localStorage.setItem("token", token);
-      $token = token;
+      const { newToken } = response.data;
+      localStorage.setItem("token", newToken);
+      token.update(token => newToken);
       console.log("response", response);
     } catch (e) {
       console.log("Login Error:", e);
