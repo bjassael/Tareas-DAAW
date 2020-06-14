@@ -3,37 +3,19 @@
   import { token } from "../store.js";
   import { setContext } from "svelte";
 
-  function login() {
-    console.log(userName, password);
-    const newToken = "asdfg";
-    localStorage.setItem("token", newToken);
-    token.update(() => newToken);
+  function postBook() {
+    console.log($token);
+    console.log(name, authorFirstName, authorLastName, genre);
+
     const nextPath = "/books";
     page.redirect(nextPath);
     setContext("current_path", nextPath);
-    window.setTimeout(() => {
-      const links = document.getElementsByClassName("linkNav");
-      Array.from(links).forEach(link => {
-        const linkPath = "/" + link.href.split("/")[3];
-        if (linkPath === nextPath) {
-          if (!link.className.includes("active")) {
-            link.className += " active";
-          }
-        } else {
-          if (link.className.includes("active")) {
-            link.className = link.className.replace(" active", "");
-          }
-        }
-      });
-    }, 10);
   }
 
-  export let userName = "";
-  export let password = "";
-
-  function handleLogin() {
-    login();
-  }
+  export let name = "";
+  export let authorFirstName = "";
+  export let authorLastName = "";
+  export let genre = "";
 </script>
 
 <style>
@@ -65,9 +47,11 @@
       class="mdc-text-field__input"
       type="text"
       aria-labelledby="my-label-id"
-      bind:value={userName}
+      bind:value={name}
       style="caret-color: grey;" />
-    <span class="mdc-floating-label form-label" id="my-label-id">Username</span>
+    <span class="mdc-floating-label form-label" id="my-label-id">
+      Book Name
+    </span>
     <span class="mdc-line-ripple" />
   </label>
   <label class="mdc-text-field mdc-text-field--filled form-field">
@@ -76,18 +60,44 @@
       class="mdc-text-field__input"
       type="text"
       aria-labelledby="my-label-id"
-      bind:value={password}
+      bind:value={authorFirstName}
       style="caret-color: grey;" />
-    <span class="mdc-floating-label form-label" id="my-label-id">Password</span>
+    <span class="mdc-floating-label form-label" id="my-label-id">
+      Author's First Name
+    </span>
+    <span class="mdc-line-ripple" />
+  </label>
+  <label class="mdc-text-field mdc-text-field--filled form-field">
+    <span class="mdc-text-field__ripple" />
+    <input
+      class="mdc-text-field__input"
+      type="text"
+      aria-labelledby="my-label-id"
+      bind:value={authorLastName}
+      style="caret-color: grey;" />
+    <span class="mdc-floating-label form-label" id="my-label-id">
+      Author's Last Name
+    </span>
+    <span class="mdc-line-ripple" />
+  </label>
+  <label class="mdc-text-field mdc-text-field--filled form-field">
+    <span class="mdc-text-field__ripple" />
+    <input
+      class="mdc-text-field__input"
+      type="text"
+      aria-labelledby="my-label-id"
+      bind:value={genre}
+      style="caret-color: grey;" />
+    <span class="mdc-floating-label form-label" id="my-label-id">Genre</span>
     <span class="mdc-line-ripple" />
   </label>
   <br />
   <div class="mdc-touch-target-wrapper">
     <button
       class="mdc-button mdc-button--raised mdc-button--touch submit"
-      on:click={handleLogin}>
+      on:click={postBook}>
       <div class="mdc-button__ripple" />
-      <span class="mdc-button__label">Sign In</span>
+      <span class="mdc-button__label">Add Book</span>
       <div class="mdc-button__touch" />
     </button>
   </div>
