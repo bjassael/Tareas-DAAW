@@ -1,24 +1,19 @@
 <script>
   import { onMount } from "svelte";
-  import Palette from "./Palette.svelte";
-  import Canvas from "./Canvas.svelte";
-
-  let currentColor = "#000000";
-  let ctx;
-  function onPickColor(color) {
-    currentColor = color;
-  }
+  import NavBar from "./components/NavBar.svelte";
 </script>
 
 <style>
-  .gameContainer {
-    margin-top: 100px;
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
     width: 100%;
+    padding: 0;
   }
 </style>
 
-<div class="gameContainer">
-  <Canvas {currentColor} />
-  <Palette {currentColor} onClick={onPickColor} />
-
+<div id="app">
+  <NavBar />
 </div>
