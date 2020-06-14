@@ -61,6 +61,7 @@ class GenreListView(generics.ListAPIView):
 
 class AuthTokenView(viewsets.GenericViewSet):
     serializer_class = AuthTokenSerializer
+    print(5)
 
     def get_permissions(self):
         permission_classes = (IsAuthenticated, )
@@ -70,11 +71,16 @@ class AuthTokenView(viewsets.GenericViewSet):
 
     @action(detail=True, methods=['post'])
     def get_or_create(self, request, *args, **kwargs):
+        print(1)
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
+        print(2)
         serializer.is_valid(raise_exception=True)
+        print(3)
         user = serializer.validated_data['user']
+        print(4)
         token, created = Token.objects.get_or_create(user=user)
+        print(5)
         return Response({'token': token.key})
 
     def destroy(self, request, *args, **kwargs):
