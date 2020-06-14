@@ -1,22 +1,38 @@
 <script>
-  import { books } from "../store.js";
+  import { booksFiltered, books } from "../store.js";
+  import { onMount } from "svelte";
 
-  function fetchBooksStore(searchString) {
-    console.log(searchString);
-    const searchParams = { name: searchString };
+  function fetchBooksStore() {
+    // const searchParams = { name: searchString };
     $books = [
-      { name: "A", authors: "B", genres: "C" },
-      { name: "A", authors: "B", genres: "C" }
+      { name: "Aaaa", authors: "bbbbb", genres: "ccccc" },
+      { name: "dddd", authors: "eeeee", genres: "fffff" }
     ];
+    $booksFiltered = [...$books];
   }
 
-  const initialSearch = fetchBooksStore("");
+  $: {
+    if (searchString) {
+      handleSearch();
+    } else {
+      handleSearch();
+    }
+  }
 
   export let searchString = "";
 
   function handleSearch() {
-    fetchBooksStore(searchString);
+    $booksFiltered = $books.filter(
+      book =>
+        book.name.toLocaleLowerCase().includes(searchString) ||
+        book.authors.toLocaleLowerCase().includes(searchString) ||
+        book.genres.toLocaleLowerCase().includes(searchString)
+    );
   }
+
+  onMount(() => {
+    fetchBooksStore();
+  });
 </script>
 
 <style>
@@ -56,14 +72,4 @@
     <span class="mdc-line-ripple" />
   </label>
   <br />
-  <div class="mdc-touch-target-wrapper">
-    <button
-      class="mdc-button mdc-button--raised mdc-button--touch submit"
-      on:click={handleSearch}
-      style="margin-left: 10%">
-      <div class="mdc-button__ripple" />
-      <span class="mdc-button__label">Search</span>
-      <div class="mdc-button__touch" />
-    </button>
-  </div>
 </div>

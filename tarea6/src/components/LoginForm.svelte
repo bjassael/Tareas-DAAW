@@ -2,9 +2,10 @@
   import page from "page.js";
   import { token } from "../store.js";
   import { setContext } from "svelte";
+  import { getOrCreateUserToken } from "../api";
 
   function login() {
-    console.log(userName, password);
+    console.log(username, password);
     const newToken = "asdfg";
     localStorage.setItem("token", newToken);
     token.update(() => newToken);
@@ -28,11 +29,22 @@
     }, 10);
   }
 
-  export let userName = "";
+  export let username = "";
   export let password = "";
 
-  function handleLogin() {
-    login();
+  async function handleLogin() {
+    console.log("token", $token);
+    console.log("username", username);
+    console.log("password", password);
+    try {
+      const response = await getOrCreateUserToken({ username, password });
+      const { token } = response.data;
+      localStorage.setItem("token", token);
+      $token = token;
+      console.log("response", response);
+    } catch (e) {
+      console.log("Login Error:", e);
+    }
   }
 </script>
 
@@ -65,7 +77,7 @@
       class="mdc-text-field__input"
       type="text"
       aria-labelledby="my-label-id"
-      bind:value={userName}
+      bind:value={username}
       placeholder="Search.."
       style="caret-color: grey;" />
     <span class="mdc-floating-label form-label" id="my-label-id">Username</span>

@@ -1,6 +1,6 @@
 <script>
   import SearchForm from "../components/SearchForm.svelte";
-  import { books } from "../store.js";
+  import { books, booksFiltered } from "../store.js";
 </script>
 
 <style>
@@ -68,7 +68,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each $books as { name, authors, genres }, i}
+        {#each $booksFiltered as { name, authors, genres }, i}
           <tr>
             <td>{name}</td>
             <td>{authors}</td>
