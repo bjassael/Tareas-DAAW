@@ -33,15 +33,29 @@
   export let password = "";
 
   async function handleLogin() {
-    console.log("token", $token);
-    console.log("username", username);
-    console.log("password", password);
     try {
       const response = await getOrCreateUserToken({ username, password });
       const { newToken } = response.data;
       localStorage.setItem("token", newToken);
       token.update(token => newToken);
-      console.log("response", response);
+      const nextPath = "/books";
+      page.redirect(nextPath);
+      setContext("current_path", nextPath);
+      window.setTimeout(() => {
+        const links = document.getElementsByClassName("linkNav");
+        Array.from(links).forEach(link => {
+          const linkPath = "/" + link.href.split("/")[3];
+          if (linkPath === nextPath) {
+            if (!link.className.includes("active")) {
+              link.className += " active";
+            }
+          } else {
+            if (link.className.includes("active")) {
+              link.className = link.className.replace(" active", "");
+            }
+          }
+        });
+      }, 10);
     } catch (e) {
       console.log("Login Error:", e);
     }
