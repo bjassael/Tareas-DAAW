@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import { books } from "../store.js";
 
   function fetchBooksStore(searchString) {

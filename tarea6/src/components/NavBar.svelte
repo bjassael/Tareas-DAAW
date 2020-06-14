@@ -1,10 +1,15 @@
 <script>
+  import page from "page.js";
   import Router from "./Router.svelte";
   import Route from "./Route.svelte";
+  import AuthorizedRoute from "./AuthorizedRoute.svelte";
   import Home from "../views/Home.svelte";
   import Books from "../views/Books.svelte";
+  import Login from "../views/Login.svelte";
   import NotFound from "../views/NotFound.svelte";
-  import { getContext, onMount } from "svelte";
+  import Unauthorized from "../views/Unauthorized.svelte";
+  import { setContext, getContext, onMount } from "svelte";
+  import { token } from "../store.js";
 
   onMount(() => {
     const currentPath = getContext("current_path");
@@ -26,9 +31,42 @@
   let current = Home;
 
   function handleClick(e) {
-    const current = document.getElementsByClassName("active")[0];
-    current.className = current.className.replace(" active", "");
-    e.target.className += " active";
+    const targetPath = "/" + e.target.href.split("/")[3];
+    const links = document.getElementsByClassName("linkNav");
+    Array.from(links).forEach(link => {
+      const linkPath = "/" + link.href.split("/")[3];
+      if (linkPath === targetPath) {
+        if (!link.className.includes("active")) {
+          link.className += " active";
+        }
+      } else {
+        if (link.className.includes("active")) {
+          link.className = link.className.replace(" active", "");
+        }
+      }
+    });
+  }
+
+  function handleLogout() {
+    const newToken = "";
+    localStorage.removeItem("token");
+    token.update(() => "");
+    const nextPath = "/";
+    page.redirect(nextPath);
+    setContext("current_path", nextPath);
+    const links = document.getElementsByClassName("linkNav");
+    Array.from(links).forEach(link => {
+      const linkPath = "/" + link.href.split("/")[3];
+      if (linkPath === nextPath) {
+        if (!link.className.includes("active")) {
+          link.className += " active";
+        }
+      } else {
+        if (link.className.includes("active")) {
+          link.className = link.className.replace(" active", "");
+        }
+      }
+    });
   }
 </script>
 
@@ -52,10 +90,6 @@
     width: 100%;
   }
 
-  li {
-    float: left;
-  }
-
   li .linkNav {
     display: block;
     color: white;
@@ -64,8 +98,12 @@
     text-decoration: none;
   }
 
+  li .linkNavLeft {
+    float: left;
+  }
+
   li .linkNavRight {
-    float: right !important;
+    float: right;
   }
 
   li .linkNav:hover:not(.active) {
@@ -80,17 +118,33 @@
 <div id="nav" class="nav">
   <ul>
     <li>
-      <a on:click={handleClick} class="linkNav active" href="/">Bookies!</a>
-    </li>
-    <li>
-      <a on:click={handleClick} class="linkNav linkNavRight" href="/books">
-        Books
+      <a on:click={handleClick} class="linkNav linkNavLeft active" href="/">
+        Bookies!
       </a>
     </li>
+    {#if !$token}
+      <li>
+        <a on:click={handleClick} class="linkNav linkNavRight" href="/login">
+          Sign In
+        </a>
+      </li>
+    {:else}
+      <li>
+        <a on:click={handleLogout} class="linkNav linkNavRight" href="/logout">
+          Logout
+        </a>
+      </li>
+      <li>
+        <a on:click={handleClick} class="linkNav linkNavRight" href="/books">
+          Books
+        </a>
+      </li>
+    {/if}
   </ul>
   <Router>
     <Route path="/" component={Home} />
-    <Route path="/books" component={Books} />
+    <Route path="/login" component={Login} />
+    <AuthorizedRoute path="/books" component={Books} />
     <Route path="*" component={NotFound} />
   </Router>
 </div>
