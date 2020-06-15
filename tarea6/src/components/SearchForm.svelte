@@ -7,7 +7,6 @@
 
     try {
       const response = await getAllBooksByUser('');
-      // $books = response.data;
       $books = response.data.map(book => {
             return {
               name: book.name,
@@ -22,11 +21,6 @@
     } catch(error) {
       console.log(error)
     }
-    // $books = [
-    //   { name: "Aaaa", authors: "bbbbb", genres: "ccccc" },
-    //   { name: "dddd", authors: "eeeee", genres: "fffff" }
-    // ];
-    // $booksFiltered = [...$books];
   }
 
   $: {
