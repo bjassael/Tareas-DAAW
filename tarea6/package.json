@@ -6,7 +6,8 @@
     "rollup": "^1.10.1",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-img": "^1.1.0",
-    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^4.2.4",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^4.0.4",
     "sirv-cli": "^0.3.1",
@@ -20,6 +21,8 @@
     "start:dev": "sirv public --dev --single"
   },
   "dependencies": {
+    "axios": "^0.19.2",
+    "lodash-humps": "^3.1.5",
     "page.js": "^4.13.3"
   }
 }

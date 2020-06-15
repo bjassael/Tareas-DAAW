@@ -2,6 +2,7 @@ import svelte from "rollup-plugin-svelte";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import image from "rollup-plugin-img";
+import json from "rollup-plugin-json";
 
 import { terser } from "rollup-plugin-terser";
 
@@ -35,8 +36,13 @@ export default {
     // some cases you'll need additional configuration —
     // consult the documentation for details:
     // https://github.com/rollup/rollup-plugin-commonjs
-    resolve(),
+    resolve({
+      jsnext: true,
+      main: true,
+      browser: true,
+    }),
     commonjs(),
+    json(),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
