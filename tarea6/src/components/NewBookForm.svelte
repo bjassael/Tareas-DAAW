@@ -44,11 +44,11 @@
       timer = setInterval(() => {
         countTime++;
         if (countTime >= 1) {
-          console.log("Now fetching");
+          // console.log("Now fetching");
           clearTimerAndResetCount();
 
           var urlToFetch = `http://openlibrary.org/search.json?title=${$bookTitle}`;
-          console.log("urlToFetch", urlToFetch);
+          // console.log("urlToFetch", urlToFetch);
           fetch(urlToFetch, {
             method: "get",
             signal: signal
@@ -58,11 +58,11 @@
               results.update(results => responseJSON.docs);
               showingInfo = true;
               clearTimerAndResetCount();
-              console.log("fetch received");
-              console.log(responseJSON);
+              // console.log("fetch received");
+              // console.log(responseJSON);
             })
             .catch(function(err) {
-              console.log("abort fetching", err);
+              // console.log("abort fetching", err);
               clearTimerAndResetCount();
             });
         }
@@ -77,7 +77,7 @@
 
   function clearTimerAndAbortFetch() {
     setTimeout(() => {
-      console.log("select out stop fetching");
+      // console.log("select out stop fetching");
       controller.abort();
       controller = new AbortController();
       clearTimerAndResetCount();
@@ -86,15 +86,15 @@
     }, 200);
   }
   function selectBook(e) {
-    console.log("select book!!");
+    // console.log("select book!!");
 
     let splitAuthor = e.detail.author.split(" ");
     authorFirstName = splitAuthor.slice(0, -1).join(" ");
-    console.log("select book!!", splitAuthor);
+    // console.log("select book!!", splitAuthor);
     authorLastName = splitAuthor[splitAuthor.length - 1];
     genre = e.detail.genre;
     bookTitle.update(title => e.detail.title);
-    console.log("e.detail.title", e.detail.title);
+    // console.log("e.detail.title", e.detail.title);
     showingInfo = false;
   }
 </script>

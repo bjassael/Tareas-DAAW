@@ -7,7 +7,6 @@
       bookinfo.subject = [];
     }
   }
-  console.log("bookinfo.subject", bookinfo.subject);
 </script>
 
 <style>
