@@ -4,38 +4,13 @@
   import { setContext } from "svelte";
   import { getOrCreateUserToken } from "../api";
 
-  function login() {
-    console.log(username, password);
-    const newToken = "asdfg";
-    localStorage.setItem("token", newToken);
-    token.update(() => newToken);
-    const nextPath = "/books";
-    page.redirect(nextPath);
-    setContext("current_path", nextPath);
-    window.setTimeout(() => {
-      const links = document.getElementsByClassName("linkNav");
-      Array.from(links).forEach(link => {
-        const linkPath = "/" + link.href.split("/")[3];
-        if (linkPath === nextPath) {
-          if (!link.className.includes("active")) {
-            link.className += " active";
-          }
-        } else {
-          if (link.className.includes("active")) {
-            link.className = link.className.replace(" active", "");
-          }
-        }
-      });
-    }, 10);
-  }
-
   export let username = "";
   export let password = "";
 
   async function handleLogin() {
     try {
       const response = await getOrCreateUserToken({ username, password });
-      const { newToken } = response.data;
+      const newToken = response.data.token;
       localStorage.setItem("token", newToken);
       token.update(token => newToken);
       const nextPath = "/books";
@@ -101,7 +76,7 @@
     <span class="mdc-text-field__ripple" />
     <input
       class="mdc-text-field__input"
-      type="text"
+      type="password"
       aria-labelledby="my-label-id"
       bind:value={password}
       placeholder="Search.."

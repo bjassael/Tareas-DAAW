@@ -19,14 +19,10 @@ service.interceptors.request.use((config) => {
 // response interceptor
 service.interceptors.response.use(
   (response) => {
-    console.log("response", response);
-
     response.data = humps(response.data);
     return response;
   },
   (error) => {
-    console.log("error", error);
-
     return Promise.reject(error);
   }
 );
