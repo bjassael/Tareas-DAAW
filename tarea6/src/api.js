@@ -32,6 +32,13 @@ export function getBooksByUser(searchParams) {
   });
 }
 
+export function getAllBooksByUser() {
+  return request({
+    url: "/books/",
+    method: "get"
+  });
+}
+
 export function newBook(bookData) {
   return request({
     url: "/books/",
