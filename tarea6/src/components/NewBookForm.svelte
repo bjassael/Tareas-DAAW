@@ -2,10 +2,17 @@
   import page from "page.js";
   import { token } from "../store.js";
   import { setContext } from "svelte";
+  import { newBook } from "../api";
 
-  function postBook() {
-    console.log($token);
-    console.log(name, authorFirstName, authorLastName, genre);
+  async function postBook() {
+
+    const bookData = {
+      name: name,
+      authorsFirstname: authorFirstName,
+      authorsLastname: authorLastName,
+      genres: genre
+    }
+    const response = await newBook(bookData)
 
     const nextPath = "/books";
     page.redirect(nextPath);
