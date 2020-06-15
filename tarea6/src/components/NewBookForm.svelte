@@ -1,10 +1,14 @@
 <script>
   import page from "page.js";
   import { token, bookTitle, results } from "../store.js";
-  import { setContext } from "svelte";
+  import { setContext, onMount } from "svelte";
   import Book from "./Book.svelte";
   import { newBook } from "../api";
   import AbortController from "abort-controller";
+
+  onMount(() => {
+    bookTitle.set("");
+  });
 
   let controller = new AbortController();
   let showingInfo = false;
