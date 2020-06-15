@@ -1,6 +1,13 @@
 <script>
+  import page from "page.js";
+  import { setContext } from "svelte";
   import SearchForm from "../components/SearchForm.svelte";
+
   import { books, booksFiltered } from "../store.js";
+  function handleNewBook() {
+    const nextPath = "/books/new";
+    page.redirect(nextPath);
+  }
 </script>
 
 <style>
@@ -53,10 +60,32 @@
   tbody tr:hover {
     background-color: #eee;
   }
+  button {
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 0;
+    color: black;
+  }
+  button:hover {
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 0;
+  }
 </style>
 
 <div class="home">
-  <h1>Books!</h1>
+  <h1>
+    Books!
+    <div class="mdc-touch-target-wrapper">
+      <button
+        class="mdc-button mdc-button--outlined mdc-button--touch submit"
+        on:click={handleNewBook}>
+        <div class="mdc-button__ripple" />
+        <span class="mdc-button__label">+ New Book</span>
+        <div class="mdc-button__touch" />
+      </button>
+    </div>
+  </h1>
   <SearchForm />
   <div class="table-container">
     <table class="table">

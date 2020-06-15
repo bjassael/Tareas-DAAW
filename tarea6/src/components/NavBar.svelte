@@ -5,28 +5,12 @@
   import AuthorizedRoute from "./AuthorizedRoute.svelte";
   import Home from "../views/Home.svelte";
   import Books from "../views/Books.svelte";
+  import NewBook from "../views/NewBook.svelte";
   import Login from "../views/Login.svelte";
   import NotFound from "../views/NotFound.svelte";
   import Unauthorized from "../views/Unauthorized.svelte";
-  import { setContext, getContext, onMount } from "svelte";
+  import { setContext, getContext } from "svelte";
   import { token } from "../store.js";
-
-  onMount(() => {
-    const currentPath = getContext("current_path");
-    const links = document.getElementsByClassName("linkNav");
-    Array.from(links).forEach(link => {
-      const linkPath = "/" + link.href.split("/")[3];
-      if (linkPath === currentPath) {
-        if (!link.className.includes("active")) {
-          link.className += " active";
-        }
-      } else {
-        if (link.className.includes("active")) {
-          link.className = link.className.replace(" active", "");
-        }
-      }
-    });
-  });
 
   let current = Home;
 
@@ -145,6 +129,7 @@
     <Route path="/" component={Home} />
     <Route path="/login" component={Login} />
     <AuthorizedRoute path="/books" component={Books} />
+    <AuthorizedRoute path="/books/new" component={NewBook} />
     <Route path="*" component={NotFound} />
   </Router>
 </div>

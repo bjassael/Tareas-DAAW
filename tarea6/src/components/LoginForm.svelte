@@ -42,16 +42,16 @@
     text-align: start;
   }
   .form-field {
-    width: 80%;
-    margin-left: 10%;
-    margin-bottom: 5%;
+    width: 60%;
+    margin-left: 20%;
+    margin-bottom: 30px;
   }
   .form-label {
     font-size: 2vh;
     top: 20%;
   }
   .submit {
-    margin-left: 10%;
+    margin-left: 20%;
     background-color: #d22c21;
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
       0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
@@ -79,7 +79,6 @@
       type="password"
       aria-labelledby="my-label-id"
       bind:value={password}
-      placeholder="Search.."
       style="caret-color: grey;" />
     <span class="mdc-floating-label form-label" id="my-label-id">Password</span>
     <span class="mdc-line-ripple" />
@@ -88,8 +87,7 @@
   <div class="mdc-touch-target-wrapper">
     <button
       class="mdc-button mdc-button--raised mdc-button--touch submit"
-      on:click={handleLogin}
-      style="margin-left: 10%">
+      on:click={handleLogin}>
       <div class="mdc-button__ripple" />
       <span class="mdc-button__label">Sign In</span>
       <div class="mdc-button__touch" />

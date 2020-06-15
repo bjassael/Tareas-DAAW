@@ -79,7 +79,7 @@
       placeholder="Search.."
       style="caret-color: grey;" />
     <span class="mdc-floating-label form-label" id="my-label-id">
-      Book name
+      Book Name
     </span>
     <span class="mdc-line-ripple" />
   </label>

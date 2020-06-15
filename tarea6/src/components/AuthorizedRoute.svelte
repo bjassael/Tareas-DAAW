@@ -1,8 +1,12 @@
 <script>
   import page from "page.js";
-  import { getContext } from "svelte";
+  import { getContext, onMount } from "svelte";
   import Unauthorized from "../views/Unauthorized.svelte";
   import { token } from "../store.js";
+
+  onMount(() => {
+    console.log("auth route");
+  });
 
   export let path = "/";
   export let component = null;
