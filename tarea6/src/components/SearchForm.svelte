@@ -1,14 +1,26 @@
 <script>
   import { booksFiltered, books } from "../store.js";
   import { onMount } from "svelte";
+  import { getAllBooksByUser } from "../api";
 
-  function fetchBooksStore() {
-    // const searchParams = { name: searchString };
-    $books = [
-      { name: "Aaaa", authors: "bbbbb", genres: "ccccc" },
-      { name: "dddd", authors: "eeeee", genres: "fffff" }
-    ];
-    $booksFiltered = [...$books];
+  async function fetchBooksStore() {
+
+    try {
+      const response = await getAllBooksByUser('');
+      $books = response.data.map(book => {
+            return {
+              name: book.name,
+              authors: book.authors
+                .map(author => `${author.firstName} ${author.lastName}`)
+                .join(),
+              genres: book.genres.map(genre => `${genre.genre}`).join()
+            }
+          })
+
+      $booksFiltered = [...$books];
+    } catch(error) {
+      console.log(error)
+    }
   }
 
   $: {
