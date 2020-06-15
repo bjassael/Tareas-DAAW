@@ -21,6 +21,7 @@
     "start:dev": "sirv public --dev --single"
   },
   "dependencies": {
+    "abort-controller": "^3.0.0",
     "axios": "^0.19.2",
     "lodash-humps": "^3.1.5",
     "page.js": "^4.13.3"
