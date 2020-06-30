@@ -1,28 +1,96 @@
 <script>
   import page from "page.js";
-  import { token } from "../store.js";
-  import { setContext } from "svelte";
+  import { token, bookTitle, results } from "../store.js";
+  import { setContext, onMount } from "svelte";
+  import Book from "./Book.svelte";
   import { newBook } from "../api";
+  import AbortController from "abort-controller";
+
+  onMount(() => {
+    bookTitle.set("");
+  });
+
+  let controller = new AbortController();
+  let showingInfo = false;
+  let focus = false;
+  let signal;
+
+  $: {
+    signal = controller.signal;
+  }
 
   async function postBook() {
-
     const bookData = {
-      name: name,
+      name: $bookTitle,
       authorsFirstname: authorFirstName,
       authorsLastname: authorLastName,
       genres: genre
-    }
-    const response = await newBook(bookData)
+    };
+    const response = await newBook(bookData);
 
     const nextPath = "/books";
     page.redirect(nextPath);
     setContext("current_path", nextPath);
   }
 
-  export let name = "";
   export let authorFirstName = "";
   export let authorLastName = "";
   export let genre = "";
+
+  let countTime = 0;
+  let timer;
+  bookTitle.subscribe(value => {
+    clearTimerAndResetCount();
+    if (value.length > 0 && focus) {
+      if (signal.aborted) {
+        signal.aborted = false;
+      }
+      timer = setInterval(() => {
+        countTime++;
+        if (countTime >= 1) {
+          clearTimerAndResetCount();
+
+          var urlToFetch = `http://openlibrary.org/search.json?title=${$bookTitle}`;
+          fetch(urlToFetch, {
+            method: "get",
+            signal: signal
+          })
+            .then(async function(response) {
+              const responseJSON = await response.json();
+              results.update(results => responseJSON.docs);
+              showingInfo = true;
+              clearTimerAndResetCount();
+            })
+            .catch(function(err) {
+              clearTimerAndResetCount();
+            });
+        }
+      }, 200);
+    }
+  });
+
+  function clearTimerAndResetCount() {
+    clearInterval(timer);
+    countTime = 0;
+  }
+
+  function clearTimerAndAbortFetch() {
+    setTimeout(() => {
+      controller.abort();
+      controller = new AbortController();
+      clearTimerAndResetCount();
+      focus = false;
+      showingInfo = false;
+    }, 200);
+  }
+  function selectBook(e) {
+    let splitAuthor = e.detail.author.split(" ");
+    authorFirstName = splitAuthor.slice(0, -1).join(" ");
+    authorLastName = splitAuthor[splitAuthor.length - 1];
+    genre = e.detail.genre;
+    bookTitle.update(title => e.detail.title);
+    showingInfo = false;
+  }
 </script>
 
 <style>
@@ -45,6 +113,24 @@
       0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     border-radius: 2px;
   }
+
+  .infoBooks {
+    position: absolute;
+    width: calc(100% - 400px);
+    margin-left: 200px;
+    background-color: rgb(233, 233, 233);
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    max-height: calc(100% - 400px);
+    overflow: auto;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 2px;
+  }
+  .infoBooks::-webkit-scrollbar {
+    display: none;
+  }
 </style>
 
 <div class="form">
@@ -54,13 +140,24 @@
       class="mdc-text-field__input"
       type="text"
       aria-labelledby="my-label-id"
-      bind:value={name}
+      bind:value={$bookTitle}
+      on:focusout={clearTimerAndAbortFetch}
+      on:focusin={() => {
+        focus = true;
+      }}
       style="caret-color: grey;" />
     <span class="mdc-floating-label form-label" id="my-label-id">
       Book Name
     </span>
     <span class="mdc-line-ripple" />
   </label>
+  {#if showingInfo && $results.length > 0}
+    <div class="infoBooks">
+      {#each $results as book}
+        <Book on:selectbook={selectBook} bookinfo={book} />
+      {/each}
+    </div>
+  {/if}
   <label class="mdc-text-field mdc-text-field--filled form-field">
     <span class="mdc-text-field__ripple" />
     <input
