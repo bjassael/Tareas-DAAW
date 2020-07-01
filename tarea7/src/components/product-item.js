@@ -9,7 +9,7 @@ template.innerHTML = `
       padding: 16px;
       width: 256px;
       border-radius: 4px;
-      border: 1px solid #d2d2d2;
+      // border: 1px solid #d2d2d2;
     }
 
     img {
@@ -19,12 +19,10 @@ template.innerHTML = `
   </style>
 
   <div>
-    <img src="//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_WSTO_grande_crop_center.jpg?v=1580996575"/>
-    <h3> Jockey Fitz Roy Trout Trucker Hat </h3>
-    <p> Price: 20.000 </p>
-    <p>
-       Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado.
-    </p>
+    <img id="img"/>
+    <h3 id="title"> </h3>
+    <p id="price"> </p>
+    <p id="description"> </p>
 
   </div>
 `;
@@ -36,43 +34,36 @@ class ProductItem extends HTMLElement {
     this._shadowRoot = this.attachShadow({ mode: 'open' });
     this._shadowRoot.appendChild(template.content.cloneNode(true));
 
-    this.$headline = this._shadowRoot.querySelector('h2');
-    this.$span = this._shadowRoot.querySelector('span');
-  }
+    this.$title = this._shadowRoot.getElementById('title');
+    this.$price = this._shadowRoot.getElementById('price');
+    this.$description = this._shadowRoot.getElementById('description');
+    this.$img = this._shadowRoot.getElementById('img');
 
-  connectedCallback() {
-    if(!this.hasAttribute('color')) {
-      this.setAttribute('color', 'orange');
-    }
-
-    if(!this.hasAttribute('text')) {
-      this.setAttribute('text', '');
-    }
-
-    this._render();
   }
 
   static get observedAttributes() {
-    return ['color', 'text'];
+    return ['data'];
+  }
+
+  get data() {
+    return JSON.parse(this.getAttribute('data'));
+  }
+ 
+  set data(value) {
+    this.setAttribute('data', JSON.stringify(value));
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
-    switch(name) {
-      case 'color':
-        this._color = newVal;
-        break;
-      case 'text':
-        this._text = newVal;
-        break;
-    };
-
-    this._render();
+    this.render();
   }
 
-  _render() {
-    this.$headline.style.color = this._color;
-    this.$span.innerHTML = this._text;
+  render() {
+    this.$title.innerHTML = this.data.title || '';
+    this.$price.innerHTML = this.data.price || '';
+    this.$description.innerHTML = this.data.description || '';
+    this.$img.src = this.data.img || '';
   }
+
 }
 
 window.customElements.define('product-item', ProductItem);
