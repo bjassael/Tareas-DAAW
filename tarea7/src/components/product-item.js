@@ -1,3 +1,5 @@
+import "./rating.js";
+
 const template = document.createElement("template");
 
 template.innerHTML = `
@@ -84,6 +86,16 @@ template.innerHTML = `
       right: 0;
       top: 50%;
     }
+
+    .rating-container {
+      width: 100%;
+    }
+
+    .num-votes {
+      color: grey;
+      font-style: italic;
+      font-size: 12px;
+    }
   </style>
 
   <div id="card">
@@ -93,7 +105,10 @@ template.innerHTML = `
     <p id="price"></p>
     <p id="stock"></p>
     <p id="description"></p>
-
+    <p id="rating"></p>
+    <div class="rating-container">
+      <custom-rating id="rating-stars" src="/assets/star1.png"></custom-rating>
+    </div>
   </div>
 `;
 
@@ -109,6 +124,8 @@ class ProductItem extends HTMLElement {
     this.$description = this._shadowRoot.getElementById("description");
     this.$img = this._shadowRoot.getElementById("img");
     this.$stock = this._shadowRoot.getElementById("stock");
+    this.$rating = this._shadowRoot.getElementById("rating");
+    this.$ratingStars = this._shadowRoot.getElementById("rating-stars");
     this.self = this._shadowRoot.getElementById("card");
   }
 
@@ -147,6 +164,24 @@ class ProductItem extends HTMLElement {
     } else {
       this.self.classList.add("sold-out");
     }
+    this.$rating.innerHTML = `${this.data.rating.toFixed(
+      1
+    )}/5.0 <span class="num-votes">${this.data.numVotes} votes</span>`;
+    this.$ratingStars.setAttribute(
+      "currentRating",
+      this.data.rating.toFixed(1)
+    );
+
+    this.$ratingStars.addEventListener("onClick", (value) => {
+      const newRating = (
+        (this.data.rating * this.data.numVotes + value.detail) /
+        (this.data.numVotes + 1)
+      ).toFixed(1);
+      this.$ratingStars.setAttribute("currentRating", newRating);
+      this.$rating.innerHTML = `${newRating}/5.0 <span class="num-votes">${
+        this.data.numVotes + 1
+      } votes</span>`;
+    });
   }
 }
 

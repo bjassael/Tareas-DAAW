@@ -10,7 +10,9 @@ const itemsData = [
     img:
       "//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_WSTO_grande_crop_center.jpg?v=1580996575",
     description:
-      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para otoño."
+      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para otoño.",
+    rating: 1.3,
+    numVotes: 1,
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 2",
@@ -19,7 +21,9 @@ const itemsData = [
     img:
       "//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_MACH_grande_crop_center.jpg?v=1580996575",
     description:
-      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para primavera."
+      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para primavera.",
+    rating: 2.5,
+    numVotes: 10,
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 3",
@@ -28,7 +32,9 @@ const itemsData = [
     img:
       "//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_WHFG_grande_crop_center.jpg?v=1580996575",
     description:
-      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para invierno."
+      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para invierno.",
+    rating: 4,
+    numVotes: 10,
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 2",
@@ -37,7 +43,9 @@ const itemsData = [
     img:
       "//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_MACH_grande_crop_center.jpg?v=1580996575",
     description:
-      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para primavera."
+      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para primavera.",
+    rating: 5,
+    numVotes: 10,
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 3",
@@ -46,8 +54,10 @@ const itemsData = [
     img:
       "//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_WHFG_grande_crop_center.jpg?v=1580996575",
     description:
-      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para invierno."
-  }
+      "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para invierno.",
+    rating: 3.6,
+    numVotes: 10,
+  },
 ];
 
 const template = document.createElement("template");
