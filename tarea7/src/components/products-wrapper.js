@@ -84,7 +84,7 @@ class ProductsWrapper extends HTMLElement {
           this.data[key].price * (this.data[key].offer || 1) ===
             +this.pricefilter)
       ) {
-        console.log("this.data[key].offer", this.data[key].offer);
+        // console.log("this.data[key].offer", this.data[key].offer);
         $product.classList.add("grid-number");
         this.$wrapper.appendChild($product);
       }
