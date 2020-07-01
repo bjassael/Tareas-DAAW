@@ -5,7 +5,9 @@ template.innerHTML = `
     .container {
       width: 100%;
     }
-
+    .container:hover{
+      cursor:pointer;
+    }
     .icon {
       width: 18%;
     }
@@ -54,7 +56,7 @@ class Rating extends HTMLElement {
       img.addEventListener("click", () => {
         this.dispatchEvent(
           new CustomEvent("onClick", {
-            detail: i + 1,
+            detail: i + 1
           })
         );
       });
