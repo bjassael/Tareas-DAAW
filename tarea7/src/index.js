@@ -6,13 +6,12 @@ const itemsData = [
     title: "Jockey Fitz Roy Trout Trucker Hat 1",
     price: 20000,
     stock: 1,
-    offer: 60,
     img:
       "//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_WSTO_grande_crop_center.jpg?v=1580996575",
     description:
       "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para otoño.",
     rating: 1.3,
-    numVotes: 1,
+    numVotes: 1
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 2",
@@ -23,18 +22,19 @@ const itemsData = [
     description:
       "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para primavera.",
     rating: 2.5,
-    numVotes: 10,
+    numVotes: 10
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 3",
     price: 60000,
+    offer: 60,
     stock: 1,
     img:
       "//cdn.shopify.com/s/files/1/0012/1661/0359/products/38008_WHFG_grande_crop_center.jpg?v=1580996575",
     description:
       "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para invierno.",
     rating: 4,
-    numVotes: 10,
+    numVotes: 10
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 2",
@@ -45,7 +45,7 @@ const itemsData = [
     description:
       "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para primavera.",
     rating: 5,
-    numVotes: 10,
+    numVotes: 10
   },
   {
     title: "Jockey Fitz Roy Trout Trucker Hat 3",
@@ -56,8 +56,8 @@ const itemsData = [
     description:
       "Nuestro clásico jockey de camionero con una corona de media altura, frente de algodón orgánico, malla trasera de poliéster, cierre de broche ajustable y logo de trucha bordado para invierno.",
     rating: 3.6,
-    numVotes: 10,
-  },
+    numVotes: 10
+  }
 ];
 
 const template = document.createElement("template");
@@ -107,6 +107,12 @@ template.innerHTML = `
           <option>60000</option>
           <option>80000</option>
         </select>
+        Order by: <select id="order-input">
+          <option value="">Featured</option>
+          <option value="price-lth">Price: Low to High</option>
+          <option value="price-htl">Price: High to Low</option>
+          <option value="c-review">Avg. Customer Review</option>
+        </select>
       </div>
 
     <products-wrapper></products-wrapper>
@@ -132,6 +138,12 @@ class App extends HTMLElement {
       this._handlePriceChange.bind(this)
     );
 
+    this.$orderInput = this._shadowRoot.getElementById("order-input");
+    this.$orderInput.addEventListener(
+      "input",
+      this._handleOrderChange.bind(this)
+    );
+
     this.$productsWrapper = this._shadowRoot.querySelector("products-wrapper");
     this.$productsWrapper.data = itemsData;
   }
@@ -142,6 +154,11 @@ class App extends HTMLElement {
 
   _handlePriceChange() {
     this.$productsWrapper.setAttribute("pricefilter", this.$priceInput.value);
+  }
+
+  _handleOrderChange() {
+    console.log("asd", this.$orderInput.value);
+    this.$productsWrapper.setAttribute("orderfilter", this.$orderInput.value);
   }
 }
 

@@ -66,7 +66,6 @@ class Rating extends HTMLElement {
   }
 
   handleChangeRating() {
-    console.log("hola", this.$imgs);
     this.$imgs.forEach((img) => {
       img.setAttribute(
         "style",
@@ -74,7 +73,6 @@ class Rating extends HTMLElement {
       );
     });
     let j = 0;
-    console.log("print", `${Math.floor(+this.$currentRating)}`);
     while (j < Math.floor(+this.$currentRating)) {
       this.$imgs[j].setAttribute(
         "style",
@@ -116,7 +114,6 @@ class Rating extends HTMLElement {
         this._src = newVal;
         break;
       case "currentrating":
-        console.log("changed val", newVal);
         this.$currentRating = newVal;
         this.handleChangeRating();
         break;

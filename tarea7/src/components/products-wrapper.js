@@ -42,7 +42,7 @@ class ProductsWrapper extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["data", "filter", "pricefilter"];
+    return ["data", "filter", "pricefilter", "orderfilter"];
   }
 
   get filter() {
@@ -61,6 +61,14 @@ class ProductsWrapper extends HTMLElement {
     this.setAttribute("pricefilter", value);
   }
 
+  get orderfilter() {
+    return this.getAttribute("orderfilter");
+  }
+
+  set orderfilter(value) {
+    this.setAttribute("orderfilter", value);
+  }
+
   get data() {
     return JSON.parse(this.getAttribute("data"));
   }
@@ -75,21 +83,40 @@ class ProductsWrapper extends HTMLElement {
 
   render() {
     this.$wrapper.innerHTML = "";
-    Object.keys(this.data || {}).forEach((key) => {
-      let $product = document.createElement("product-item");
-      $product.data = this.data[key];
-      if (
-        (!this.filter || this.data[key].title.includes(this.filter)) &&
-        (!this.pricefilter ||
-          this.data[key].price * (this.data[key].offer || 1) ===
-            +this.pricefilter)
-      ) {
-        // console.log("this.data[key].offer", this.data[key].offer);
-        $product.classList.add("grid-number");
-        this.$wrapper.appendChild($product);
-      }
-    });
+    this.data
+      .sort((a, b) => {
+        return sortProductsBy(a, b, this.orderfilter);
+      })
+      .forEach((product) => {
+        let $product = document.createElement("product-item");
+        $product.data = product;
+        if (
+          (!this.filter || product.title.includes(this.filter)) &&
+          (!this.pricefilter ||
+            product.price * (product.offer || 1) === +this.pricefilter)
+        ) {
+          $product.classList.add("grid-number");
+          this.$wrapper.appendChild($product);
+        }
+      });
   }
 }
 
 window.customElements.define("products-wrapper", ProductsWrapper);
+
+function sortProductsBy(a, b, order) {
+  switch (order) {
+    case "price-lth":
+      return (
+        (a.price * (a.offer || 100)) / 100 - (b.price * (b.offer || 100)) / 100
+      );
+    case "price-htl":
+      return (
+        (b.price * (b.offer || 100)) / 100 - (a.price * (a.offer || 100)) / 100
+      );
+    case "c-review":
+      return b.rating - a.rating;
+    default:
+      return;
+  }
+}
