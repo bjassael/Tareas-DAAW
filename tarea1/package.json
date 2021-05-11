@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/jfbahamondes/tarea_1_grupo_4#readme",
   "dependencies": {
-    "lodash": "^4.14.149"
+    "lodash": "^4.17.21"
   }
 }
